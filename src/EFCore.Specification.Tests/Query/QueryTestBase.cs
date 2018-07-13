@@ -302,54 +302,6 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         #endregion
 
-        #region AssertIncludeQuery
-
-        public List<object> AssertIncludeQuery<TItem1>(
-            Func<IQueryable<TItem1>, IQueryable<object>> query,
-            List<IExpectedInclude> expectedIncludes,
-            Func<dynamic, object> elementSorter = null,
-            List<Func<dynamic, object>> clientProjections = null,
-            bool assertOrder = false,
-            int entryCount = 0)
-            where TItem1 : class
-            => AssertIncludeQuery(query, query, expectedIncludes, elementSorter, clientProjections, assertOrder, entryCount);
-
-        public List<object> AssertIncludeQuery<TItem1>(
-            Func<IQueryable<TItem1>, IQueryable<object>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<object>> expectedQuery,
-            List<IExpectedInclude> expectedIncludes,
-            Func<dynamic, object> elementSorter = null,
-            List<Func<dynamic, object>> clientProjections = null,
-            bool assertOrder = false,
-            int entryCount = 0)
-            where TItem1 : class
-            => Fixture.QueryAsserter.AssertIncludeQuery(actualQuery, expectedQuery, expectedIncludes, elementSorter, clientProjections, assertOrder, entryCount).GetAwaiter().GetResult();
-
-        public List<object> AssertIncludeQuery<TItem1, TItem2>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<object>> query,
-            List<IExpectedInclude> expectedIncludes,
-            Func<dynamic, object> elementSorter = null,
-            List<Func<dynamic, object>> clientProjections = null,
-            bool assertOrder = false,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            => AssertIncludeQuery(query, query, expectedIncludes, elementSorter, clientProjections, assertOrder, entryCount);
-
-        public List<object> AssertIncludeQuery<TItem1, TItem2>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<object>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<object>> expectedQuery,
-            List<IExpectedInclude> expectedIncludes,
-            Func<dynamic, object> elementSorter = null,
-            List<Func<dynamic, object>> clientProjections = null,
-            bool assertOrder = false,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            => Fixture.QueryAsserter.AssertIncludeQuery(actualQuery, expectedQuery, expectedIncludes, elementSorter, clientProjections, assertOrder, entryCount).GetAwaiter().GetResult();
-
-        #endregion
-
         #region Helpers - Sorters
 
         public static Func<dynamic, dynamic> GroupingSorter<TKey, TElement>()

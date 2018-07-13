@@ -40,27 +40,10 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Level4_Include()
-        {
-            // Due to level 4 being owned, other tests using l4 as root could cause same same query as this one to run
-            // generating different SQL
-        }
 
         #region #8172 - One-to-many not supported yet
 
-        public override void Multiple_SelectMany_with_string_based_Include()
-        {
-        }
-
         public override void Where_navigation_property_to_collection_of_original_entity_type()
-        {
-        }
-
-        public override void SelectMany_with_Include1()
-        {
-        }
-
-        public override void SelectMany_with_Include2()
         {
         }
 
@@ -96,19 +79,7 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Multi_level_include_correct_PK_is_chosen_as_the_join_predicate_for_queries_that_join_same_table_multiple_times()
-        {
-        }
-
-        public override void Required_navigation_with_Include_ThenInclude()
-        {
-        }
-
         public override void SelectMany_nested_navigation_property_required()
-        {
-        }
-
-        public override void Multiple_include_with_multiple_optional_navigations()
         {
         }
 
@@ -116,15 +87,7 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Multiple_complex_includes()
-        {
-        }
-
         public override void SelectMany_with_navigation_filter_and_explicit_DefaultIfEmpty()
-        {
-        }
-
-        public override void SelectMany_with_string_based_Include2()
         {
         }
 
@@ -136,10 +99,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Include_with_groupjoin_skip_and_take()
-        {
-        }
-
         public override void SelectMany_navigation_property_and_projection()
         {
         }
@@ -148,15 +107,7 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Multi_level_include_one_to_many_optional_and_one_to_many_optional_produces_valid_sql()
-        {
-        }
-
         public override void SelectMany_navigation_property_with_another_navigation_in_subquery()
-        {
-        }
-
-        public override void SelectMany_with_string_based_Include1()
         {
         }
 
@@ -165,10 +116,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         public override void SelectMany_navigation_property()
-        {
-        }
-
-        public override void Complex_multi_include_with_order_by_and_paging()
         {
         }
 
@@ -184,14 +131,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Required_navigation_with_Include()
-        {
-        }
-
-        public override void Complex_multi_include_with_order_by_and_paging_joins_on_correct_key()
-        {
-        }
-
         public override void Complex_query_with_optional_navigations_and_client_side_evaluation()
         {
         }
@@ -200,27 +139,7 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Multiple_complex_include_select()
-        {
-        }
-
-        public override void SelectMany_with_navigation_and_Distinct()
-        {
-        }
-
-        public override void Optional_navigation_with_Include_ThenInclude()
-        {
-        }
-
         public override void SelectMany_with_nested_navigation_filter_and_explicit_DefaultIfEmpty()
-        {
-        }
-
-        public override void SelectMany_with_Include_ThenInclude()
-        {
-        }
-
-        public override void Include_nested_with_optional_navigation()
         {
         }
 
@@ -228,19 +147,7 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Multiple_optional_navigation_with_Include()
-        {
-        }
-
         public override void Where_navigation_property_to_collection()
-        {
-        }
-
-        public override void Multiple_SelectMany_with_Include()
-        {
-        }
-
-        public override void Multiple_optional_navigation_with_string_based_Include()
         {
         }
 
@@ -256,10 +163,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Complex_multi_include_with_order_by_and_paging_joins_on_correct_key2()
-        {
-        }
-
         public override void SelectMany_with_navigation_filter_paging_and_explicit_DefaultIfEmpty()
         {
         }
@@ -270,10 +173,6 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         // Self-ref not supported
         public override void Join_navigation_translated_to_subquery_self_ref()
-        {
-        }
-
-        public override void Multiple_complex_includes_self_ref()
         {
         }
 
@@ -354,78 +253,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         public override void Select_optional_navigation_property_string_concat()
-        {
-        }
-
-        public override void Include_collection_with_multiple_orderbys_member()
-        {
-        }
-
-        public override void Include_collection_with_multiple_orderbys_property()
-        {
-        }
-
-        public override void Include_collection_with_multiple_orderbys_methodcall()
-        {
-        }
-
-        public override void Include_collection_with_multiple_orderbys_complex()
-        {
-        }
-
-        public override void Include_collection_with_multiple_orderbys_complex_repeated()
-        {
-        }
-
-        public override void Include_collection_with_groupby_in_subquery()
-        {
-        }
-
-        public override void Multi_include_with_groupby_in_subquery()
-        {
-        }
-
-        public override void Include_collection_with_groupby_in_subquery_and_filter_before_groupby()
-        {
-        }
-
-        public override void Include_collection_with_groupby_in_subquery_and_filter_after_groupby()
-        {
-        }
-
-        public override void Include_reference_collection_order_by_reference_navigation()
-        {
-        }
-
-        public override void Optional_navigation_with_order_by_and_Include()
-        {
-        }
-
-        public override void Optional_navigation_with_Include_and_order()
-        {
-        }
-
-        public override void SelectMany_with_order_by_and_Include()
-        {
-        }
-
-        public override void SelectMany_with_Include_and_order_by()
-        {
-        }
-
-        public override void Include_after_SelectMany_and_reference_navigation()
-        {
-        }
-
-        public override void Include_after_multiple_SelectMany_and_reference_navigation()
-        {
-        }
-
-        public override void Include_after_SelectMany_and_multiple_reference_navigations()
-        {
-        }
-
-        public override void Include_after_SelectMany_and_reference_navigation_with_another_SelectMany_with_Distinct()
         {
         }
 

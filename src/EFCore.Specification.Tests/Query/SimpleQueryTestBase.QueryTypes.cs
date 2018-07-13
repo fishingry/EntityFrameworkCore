@@ -86,33 +86,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void QueryType_with_included_nav()
-        {
-            AssertIncludeQuery<OrderQuery>(
-                ovs => from ov in ovs.Include(ov => ov.Customer)
-                       where ov.CustomerID == "ALFKI"
-                       select ov,
-                new List<IExpectedInclude>
-                {
-                    new ExpectedInclude<OrderQuery>(ov => ov.Customer, "Customer")
-                });
-        }
-
-        [ConditionalFact]
-        public virtual void QueryType_with_included_navs_multi_level()
-        {
-            AssertIncludeQuery<OrderQuery>(
-                ovs => from ov in ovs.Include(ov => ov.Customer.Orders)
-                       where ov.CustomerID == "ALFKI"
-                       select ov,
-                new List<IExpectedInclude>
-                {
-                    new ExpectedInclude<OrderQuery>(ov => ov.Customer, "Customer"),
-                    new ExpectedInclude<Customer>(c => c.Orders, "Orders")
-                });
-        }
-
-        [ConditionalFact]
         public virtual void QueryType_select_where_navigation()
         {
             AssertQuery<OrderQuery>(

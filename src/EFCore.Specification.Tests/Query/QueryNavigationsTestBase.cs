@@ -288,34 +288,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_Where_Navigation_Included()
-        {
-            AssertIncludeQuery<Order>(
-                os => from o in os.Include(o => o.Customer)
-                      where o.Customer.City == "Seattle"
-                      select o,
-                new List<IExpectedInclude> { new ExpectedInclude<Order>(o => o.Customer, "Customer") },
-                entryCount: 15);
-        }
-
-        [ConditionalFact]
-        public virtual void Include_with_multiple_optional_navigations()
-        {
-            var expectedIncludes = new List<IExpectedInclude>
-            {
-                new ExpectedInclude<OrderDetail>(od => od.Order, "Order"),
-                new ExpectedInclude<Order>(o => o.Customer, "Customer", "Order")
-            };
-
-            AssertIncludeQuery<OrderDetail>(
-                ods => ods
-                    .Include(od => od.Order.Customer)
-                    .Where(od => od.Order.Customer.City == "London"),
-                expectedIncludes,
-                entryCount: 164);
-        }
-
-        [ConditionalFact]
         public virtual void Select_count_plus_sum()
         {
             AssertQuery<Order>(
