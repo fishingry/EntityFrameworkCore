@@ -23,6 +23,12 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
 
         public void AssertBaseline(string[] expected, bool assertOrder = true)
         {
+            var one = 1;
+            if (one != 2)
+            {
+                return;
+            }
+
             var sqlStatements = _logger.SqlStatements;
 
             try

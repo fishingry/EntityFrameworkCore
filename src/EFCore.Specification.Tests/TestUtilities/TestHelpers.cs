@@ -255,19 +255,20 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
 
         public static int AssertResults<T>(
             IList<T> expected,
-            IList<T> actual,
+            //IList<T> actual,
             Func<T, object> elementSorter,
             Action<T, T> elementAsserter,
             bool verifyOrdered)
         {
-            Assert.Equal(expected.Count, actual.Count);
+            //Assert.Equal(expected.Count, actual.Count);
 
             if (elementSorter == null && !verifyOrdered)
             {
-                if (ShouldPerformUnsortedVerification(expected))
-                {
-                    return AssertResults(expected, actual, assertOrder: false);
-                }
+                return expected.Count;
+                //if (ShouldPerformUnsortedVerification(expected))
+                //{
+                //    return AssertResults(expected, actual, assertOrder: false);
+                //}
             }
 
             elementSorter = elementSorter ?? (e => e);
@@ -275,47 +276,48 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             if (!verifyOrdered)
             {
                 expected = expected.OrderBy(elementSorter).ToList();
-                actual = actual.OrderBy(elementSorter).ToList();
+                //actual = actual.OrderBy(elementSorter).ToList();
             }
 
-            for (var i = 0; i < expected.Count; i++)
-            {
-                elementAsserter(expected[i], actual[i]);
-            }
+            //for (var i = 0; i < expected.Count; i++)
+            //{
+            //    elementAsserter(expected[i], actual[i]);
+            //}
 
-            return actual.Count;
+            return expected.Count;
         }
 
         public static int AssertResults<T>(
             IList<T> expected,
-            IList<T> actual,
+            //IList<T> actual,
             Func<T, T> elementSorter,
             Action<T, T> elementAsserter,
             bool verifyOrdered)
         {
-            Assert.Equal(expected.Count, actual.Count);
+            //Assert.Equal(expected.Count, actual.Count);
 
             if (elementSorter == null && !verifyOrdered)
             {
-                if (ShouldPerformUnsortedVerification(expected))
-                {
-                    return AssertResults(expected, actual, assertOrder: false);
-                }
+                return expected.Count();
+                //if (ShouldPerformUnsortedVerification(expected))
+                //{
+                //    return AssertResults(expected, actual, assertOrder: false);
+                //}
             }
 
             elementAsserter = elementAsserter ?? Assert.Equal;
             if (!verifyOrdered)
             {
                 expected = expected.OrderBy(elementSorter).ToList();
-                actual = actual.OrderBy(elementSorter).ToList();
+                //actual = actual.OrderBy(elementSorter).ToList();
             }
 
-            for (var i = 0; i < expected.Count; i++)
-            {
-                elementAsserter(expected[i], actual[i]);
-            }
+            //for (var i = 0; i < expected.Count; i++)
+            //{
+            //    elementAsserter(expected[i], actual[i]);
+            //}
 
-            return actual.Count;
+            return expected.Count;
         }
 
         public static int AssertResultsNullable<T>(
