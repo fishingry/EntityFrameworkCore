@@ -28,13 +28,5 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
             await Assert.ThrowsAsync<Exception>(async () => await AssertQuery<Customer>(cs => cs.Skip(5).Take(10)));
         }
-
-        [Fact]
-        public async Task Single_Predicate_Cancellation()
-        {
-            await Assert.ThrowsAsync<TaskCanceledException>(
-                async () =>
-                    await Single_Predicate_Cancellation_test(Fixture.TestSqlLoggerFactory.CancelQuery()));
-        }
     }
 }

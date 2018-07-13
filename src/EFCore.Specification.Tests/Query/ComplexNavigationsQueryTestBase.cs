@@ -1395,49 +1395,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Result_operator_nav_prop_reference_optional_Sum()
-        {
-            AssertSingleResult<Level1>(
-                l1s => l1s.Sum(e => (int?)e.OneToOne_Optional_FK.Level1_Required_Id),
-                l1s => l1s.Sum(e => MaybeScalar<int>(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Level1_Required_Id)));
-        }
-
-        [ConditionalFact]
-        public virtual void Result_operator_nav_prop_reference_optional_Min()
-        {
-            AssertSingleResult<Level1>(
-                l1s => l1s.Min(e => (int?)e.OneToOne_Optional_FK.Level1_Required_Id),
-                l1s => l1s.Min(e => MaybeScalar<int>(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Level1_Required_Id)));
-        }
-
-        [ConditionalFact]
-        public virtual void Result_operator_nav_prop_reference_optional_Max()
-        {
-            AssertSingleResult<Level1>(
-                l1s => l1s.Max(e => (int?)e.OneToOne_Optional_FK.Level1_Required_Id),
-                l1s => l1s.Max(e => MaybeScalar<int>(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Level1_Required_Id)));
-        }
-
-        [ConditionalFact]
-        public virtual void Result_operator_nav_prop_reference_optional_Average()
-        {
-            AssertSingleResult<Level1>(
-                l1s => l1s.Average(e => (int?)e.OneToOne_Optional_FK.Level1_Required_Id),
-                l1s => l1s.Average(e => MaybeScalar<int>(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Level1_Required_Id)));
-        }
-
-        [ConditionalFact]
-        public virtual void Result_operator_nav_prop_reference_optional_via_DefaultIfEmpty()
-        {
-            AssertSingleResult<Level1, Level2>(
-                (l1s, l2s) =>
-                    (from l1 in l1s
-                     join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                     from l2 in groupJoin.DefaultIfEmpty()
-                     select l2).Sum(e => e == null ? 0 : e.Level1_Required_Id));
-        }
-
-        [ConditionalFact]
         public virtual void Include_with_optional_navigation()
         {
             AssertIncludeQuery<Level1>(

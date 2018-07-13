@@ -214,17 +214,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Local_array()
-        {
-            var context = new Context();
-            context.Arguments.Add("customerId", "ALFKI");
-
-            AssertSingleResult<Customer>(
-                cs => cs.Single(c => c.CustomerID == (string)context.Arguments["customerId"]),
-                entryCount: 1);
-        }
-
-        [ConditionalFact]
         public virtual void Method_with_constant_queryable_arg()
         {
             using (var context = CreateContext())
@@ -601,41 +590,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Skip_Take_Any()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.ContactName).Skip(5).Take(10).Any());
-        }
-
-        [ConditionalFact]
-        public virtual void Skip_Take_All()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.CustomerID).Skip(4).Take(7).All(p => p.CustomerID.StartsWith("B")));
-        }
-
-        [ConditionalFact]
-        public virtual void Take_All()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.CustomerID).Take(4).All(p => p.CustomerID.StartsWith("A")));
-        }
-
-        [ConditionalFact]
-        public virtual void Skip_Take_Any_with_predicate()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.CustomerID).Skip(5).Take(7).Any(p => p.CustomerID.StartsWith("C")));
-        }
-
-        [ConditionalFact]
-        public virtual void Take_Any_with_predicate()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.CustomerID).Take(5).Any(p => p.CustomerID.StartsWith("B")));
-        }
-
-        [ConditionalFact]
         public virtual void Take_Skip_Distinct()
         {
             AssertQuery<Customer>(
@@ -670,50 +624,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                 os => os.Distinct().OrderBy(o => o.OrderID).Take(5),
                 assertOrder: true,
                 entryCount: 5);
-        }
-
-        [ConditionalFact]
-        public virtual void Distinct_Take_Count()
-        {
-            AssertSingleResult<Order>(os => os.Distinct().Take(5).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Take_Distinct_Count()
-        {
-            AssertSingleResult<Order>(os => os.Take(5).Distinct().Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Take_Where_Distinct_Count()
-        {
-            AssertSingleResult<Order>(
-                os => os.Where(o => o.CustomerID == "FRANK").Take(5).Distinct().Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Any_simple()
-        {
-            AssertSingleResult<Customer>(cs => cs.Any());
-        }
-
-        [ConditionalFact]
-        public virtual void OrderBy_Take_Count()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Take(5).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Take_OrderBy_Count()
-        {
-            AssertSingleResult<Order>(os => os.Take(5).OrderBy(o => o.OrderID).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Any_predicate()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Any(c => c.ContactName.StartsWith("A")));
         }
 
         [ConditionalFact]
@@ -779,55 +689,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void All_top_level()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.All(c => c.ContactName.StartsWith("A")));
-        }
-
-        [ConditionalFact]
-        public virtual void All_top_level_column()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.All(c => c.ContactName.StartsWith(c.ContactName)));
-        }
-
-        [ConditionalFact]
-        public virtual void All_top_level_subquery()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.All(c1 => cs.Any(c2 => cs.Any(c3 => c1.CustomerID == c3.CustomerID))));
-        }
-
-        [ConditionalFact]
-        public virtual void All_top_level_subquery_ef_property()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.All(c1 => cs.Any(c2 => cs.Any(c3 => EF.Property<string>(c1, "CustomerID") == c3.CustomerID))));
-        }
-
-        [ConditionalFact]
-        public virtual void All_client()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.All(c => c.IsLondon));
-        }
-
-        [ConditionalFact]
-        public virtual void All_client_and_server_top_level()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.All(c => c.CustomerID != "Foo" && c.IsLondon));
-        }
-
-        [ConditionalFact]
-        public virtual void All_client_or_server_top_level()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.All(c => c.CustomerID != "Foo" || c.IsLondon));
-        }
-
-        [ConditionalFact]
         public virtual void Projection_when_arithmetic_expressions()
         {
             AssertQuery<Order>(
@@ -888,40 +749,9 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Take_with_single()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.CustomerID).Take(1).Single(),
-                entryCount: 1);
-        }
-
-        [ConditionalFact]
-        public virtual void Take_with_single_select_many()
-        {
-            AssertSingleResult<Customer, Order>(
-                (cs, os) =>
-                    (from c in cs
-                     from o in os
-                     orderby c.CustomerID, o.OrderID
-                     select new { c, o })
-                        .Take(1)
-                        .Cast<object>()
-                        .Single(),
-                entryCount: 2);
-        }
-
-        [ConditionalFact]
         public virtual void Cast_results_to_object()
         {
             AssertQuery<Customer>(cs => from c in cs.Cast<object>() select c, entryCount: 91);
-        }
-
-        [ConditionalFact]
-        public virtual void First_client_predicate()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.CustomerID).First(c => c.IsLondon),
-                entryCount: 1);
         }
 
         [ConditionalFact]
@@ -1753,76 +1583,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Join_Where_Count()
-        {
-            AssertSingleResult<Customer, Order>(
-                (cs, os) =>
-                    (from c in cs
-                     join o in os on c.CustomerID equals o.CustomerID
-                     where c.CustomerID == "ALFKI"
-                     select c).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Where_Join_Any()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI" && c.Orders.Any(o => o.OrderDate == new DateTime(2008, 10, 24))));
-        }
-
-        [ConditionalFact]
-        public virtual void Where_Join_Exists()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI" && c.Orders.Exists(o => o.OrderDate == new DateTime(2008, 10, 24))));
-        }
-
-        [ConditionalFact]
-        public virtual void Where_Join_Exists_Inequality()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI" && c.Orders.Exists(o => o.OrderDate != new DateTime(2008, 10, 24))),
-                entryCount: 1);
-        }
-
-        [ConditionalFact]
-        public virtual void Where_Join_Exists_Constant()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI" && c.Orders.Exists(o => false)));
-        }
-
-        [ConditionalFact]
-        public virtual void Where_Join_Not_Exists()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI" && !c.Orders.Exists(o => false)),
-                entryCount: 1);
-        }
-
-        [ConditionalFact]
-        public virtual void Multiple_joins_Where_Order_Any()
-        {
-            AssertSingleResult<Customer, Order, OrderDetail>(
-                (cs, os, ods) =>
-                    cs.Join(os, c => c.CustomerID, o => o.CustomerID, (cr, or) => new { cr, or })
-                        .Join(ods, e => e.or.OrderID, od => od.OrderID, (e, od) => new { e.cr, e.or, od })
-                        .Where(r => r.cr.City == "London").OrderBy(r => r.cr.CustomerID)
-                        .Any());
-        }
-
-        [ConditionalFact]
-        public virtual void Join_OrderBy_Count()
-        {
-            AssertSingleResult<Customer, Order>(
-                (cs, os) =>
-                    (from c in cs
-                     join o in os on c.CustomerID equals o.CustomerID
-                     orderby c.CustomerID
-                     select c).Count());
-        }
-
-        [ConditionalFact]
         public virtual void Where_join_select()
         {
             AssertQuery<Customer, Order>(
@@ -1947,66 +1707,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     select new { c.ContactName, o.OrderID },
                 e => e.OrderID);
         }
-
-        [ConditionalFact]
-        public virtual void SelectMany_Count()
-        {
-            AssertSingleResult<Customer, Order>(
-                (cs, os) =>
-                    (from c in cs
-                     from o in os
-                     select c.CustomerID).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void SelectMany_LongCount()
-        {
-            AssertSingleResult<Customer, Order>(
-                (cs, os) =>
-                    (from c in cs
-                     from o in os
-                     select c.CustomerID).LongCount());
-        }
-
-        [ConditionalFact]
-        public virtual void SelectMany_OrderBy_ThenBy_Any()
-        {
-            AssertSingleResult<Customer, Order>(
-                (cs, os) =>
-                    (from c in cs
-                     from o in os
-                     orderby c.CustomerID, c.City
-                     select c).Any());
-        }
-
-        // TODO: Composite keys, slow..
-
-        //        [ConditionalFact]
-        //        public virtual void Multiple_joins_with_join_conditions_in_where()
-        //        {
-        //            AssertQuery<Customer, Order, OrderDetail>((cs, os, ods) =>
-        //                from c in cs
-        //                from o in os.OrderBy(o1 => o1.OrderID).Take(10)
-        //                from od in ods
-        //                where o.CustomerID == c.CustomerID
-        //                    && o.OrderID == od.OrderID
-        //                where c.CustomerID == "ALFKI"
-        //                select od.ProductID,
-        //                assertOrder: true);
-        //        }
-        //        [ConditionalFact]
-        //
-        //        public virtual void TestMultipleJoinsWithMissingJoinCondition()
-        //        {
-        //            AssertQuery<Customer, Order, OrderDetail>((cs, os, ods) =>
-        //                from c in cs
-        //                from o in os
-        //                from od in ods
-        //                where o.CustomerID == c.CustomerID
-        //                where c.CustomerID == "ALFKI"
-        //                select od.ProductID
-        //                );
-        //        }
 
         [ConditionalFact]
         public virtual void OrderBy()
@@ -2198,13 +1898,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     .ThenByDescending(c => c.Country, StringComparer.Ordinal)
                     .Select(c => c.City),
                 assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void OrderBy_ThenBy_Any()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.OrderBy(c => c.CustomerID).ThenBy(c => c.ContactName).Any());
         }
 
         [ConditionalFact]
@@ -2980,18 +2673,6 @@ namespace Microsoft.EntityFrameworkCore.Query
             }
         }
 
-        [ConditionalFact]
-        public virtual void Handle_materialization_properly_when_more_than_two_query_sources_are_involved()
-        {
-            AssertSingleResult<Customer, Order, Employee>(
-                (cs, os, es) =>
-                    (from c in cs.OrderBy(c => c.CustomerID)
-                     from o in os
-                     from e in es
-                     select new { c }).FirstOrDefault(),
-                entryCount: 1);
-        }
-
         // ReSharper disable ArrangeRedundantParentheses
         [ConditionalFact]
         public virtual void Parameter_extraction_short_circuits_1()
@@ -3555,13 +3236,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Anonymous_member_distinct_result()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Select(c => new { c.CustomerID }).Distinct().Count(n => n.CustomerID.StartsWith("A")));
-        }
-
-        [ConditionalFact]
         public virtual void Anonymous_complex_distinct_where()
         {
             AssertQuery<Customer>(
@@ -3575,13 +3249,6 @@ namespace Microsoft.EntityFrameworkCore.Query
             AssertQuery<Customer>(
                 cs => cs.Select(c => new { A = c.CustomerID + c.City }).Distinct().OrderBy(n => n.A),
                 e => e.A);
-        }
-
-        [ConditionalFact]
-        public virtual void Anonymous_complex_distinct_result()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Select(c => new { A = c.CustomerID + c.City }).Distinct().Count(n => n.A.StartsWith("A")));
         }
 
         [ConditionalFact]
@@ -3653,13 +3320,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void DTO_member_distinct_result()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Select(c => new DTO<string> { Property = c.CustomerID }).Distinct().Count(n => n.Property.StartsWith("A")));
-        }
-
-        [ConditionalFact]
         public virtual void DTO_complex_distinct_where()
         {
             AssertQuery<Customer>(
@@ -3675,13 +3335,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                 cs => cs.Select(c => new DTO<string> { Property = c.CustomerID + c.City }).Distinct().OrderBy(n => n.Property),
                 assertOrder: true,
                 elementAsserter: (e, a) => Assert.Equal(e.Property, a.Property));
-        }
-
-        [ConditionalFact]
-        public virtual void DTO_complex_distinct_result()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Select(c => new DTO<string> { Property = c.CustomerID + c.City }).Distinct().Count(n => n.Property.StartsWith("A")));
         }
 
         [ConditionalFact]
@@ -3783,138 +3436,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     where lastOrder != null
                     select c,
                 entryCount: 89);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_take_average()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Take(10).Average());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_take_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.Take(7).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_orderBy_take_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.OrderBy(c => c.Country).Take(7).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_take_long_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.Take(7).LongCount());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_orderBy_take_long_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.OrderBy(c => c.Country).Take(7).LongCount());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_take_max()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Take(10).Max());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_take_min()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Take(10).Min());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_take_sum()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Take(10).Sum());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_skip_average()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Skip(10).Average());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_skip_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.Skip(7).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_orderBy_skip_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.OrderBy(c => c.Country).Skip(7).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_skip_long_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.Skip(7).LongCount());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_orderBy_skip_long_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.OrderBy(c => c.Country).Skip(7).LongCount());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_skip_max()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Skip(10).Max());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_skip_min()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Skip(10).Min());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_skip_sum()
-        {
-            AssertSingleResult<Order>(os => os.OrderBy(o => o.OrderID).Select(o => o.OrderID).Skip(10).Sum());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_distinct_average()
-        {
-            AssertSingleResult<Order>(os => os.Select(o => o.OrderID).Distinct().Average());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_distinct_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.Distinct().Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_distinct_long_count()
-        {
-            AssertSingleResult<Customer>(cs => cs.Distinct().LongCount());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_distinct_max()
-        {
-            AssertSingleResult<Order>(os => os.Select(o => o.OrderID).Distinct().Max());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_distinct_min()
-        {
-            AssertSingleResult<Order>(os => os.Select(o => o.OrderID).Distinct().Min());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_distinct_sum()
-        {
-            AssertSingleResult<Order>(os => os.Select(o => o.OrderID).Distinct().Sum());
         }
 
         [ConditionalFact]
@@ -4186,19 +3707,6 @@ namespace Microsoft.EntityFrameworkCore.Query
 
                 Assert.Equal(830, results.SelectMany(r => r.Orders).ToList().Count);
             }
-        }
-
-        [ConditionalFact]
-        public virtual void Join_take_count_works()
-        {
-            AssertSingleResult<Order, Customer>(
-                (os, cs) =>
-                (from o in os.Where(o => o.OrderID > 690 && o.OrderID < 710)
-                 join c in cs.Where(c => c.CustomerID == "ALFKI")
-                  on o.CustomerID equals c.CustomerID
-                 select o)
-                 .Take(5)
-                 .Count());
         }
 
         [ConditionalFact]

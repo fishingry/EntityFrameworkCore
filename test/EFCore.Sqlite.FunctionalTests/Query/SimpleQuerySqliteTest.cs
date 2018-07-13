@@ -331,16 +331,6 @@ FROM ""Customers"" AS ""c""
 WHERE (instr(""c"".""City"", 'Sea') - 1) <> -1");
         }
 
-        public override void Indexof_with_emptystring()
-        {
-            base.Indexof_with_emptystring();
-
-            AssertSql(
-                @"SELECT instr(""c"".""ContactName"", '') - 1
-FROM ""Customers"" AS ""c""
-WHERE ""c"".""CustomerID"" = 'ALFKI'");
-        }
-
         public override void Where_string_replace()
         {
             base.Where_string_replace();
@@ -349,16 +339,6 @@ WHERE ""c"".""CustomerID"" = 'ALFKI'");
                 @"SELECT ""c"".""CustomerID"", ""c"".""Address"", ""c"".""City"", ""c"".""CompanyName"", ""c"".""ContactName"", ""c"".""ContactTitle"", ""c"".""Country"", ""c"".""Fax"", ""c"".""Phone"", ""c"".""PostalCode"", ""c"".""Region""
 FROM ""Customers"" AS ""c""
 WHERE replace(""c"".""City"", 'Sea', 'Rea') = 'Reattle'");
-        }
-
-        public override void Replace_with_emptystring()
-        {
-            base.Replace_with_emptystring();
-
-            AssertSql(
-                @"SELECT replace(""c"".""ContactName"", 'ari', '')
-FROM ""Customers"" AS ""c""
-WHERE ""c"".""CustomerID"" = 'ALFKI'");
         }
 
         public override void Where_string_substring()
@@ -371,59 +351,6 @@ FROM ""Customers"" AS ""c""
 WHERE substr(""c"".""City"", 2, 2) = 'ea'");
         }
 
-        public override void Substring_with_zero_startindex()
-        {
-            base.Substring_with_zero_startindex();
-
-            AssertSql(
-                @"SELECT substr(""c"".""ContactName"", 1, 3)
-FROM ""Customers"" AS ""c""
-WHERE ""c"".""CustomerID"" = 'ALFKI'");
-        }
-
-        public override void Substring_with_constant()
-        {
-            base.Substring_with_constant();
-
-            AssertSql(
-                @"SELECT substr(""c"".""ContactName"", 2, 3)
-FROM ""Customers"" AS ""c""
-WHERE ""c"".""CustomerID"" = 'ALFKI'");
-        }
-
-        public override void Substring_with_closure()
-        {
-            base.Substring_with_closure();
-
-            AssertSql(
-                @"@__start_0='2' (DbType = String)
-
-SELECT substr(""c"".""ContactName"", @__start_0 + 1, 3)
-FROM ""Customers"" AS ""c""
-WHERE ""c"".""CustomerID"" = 'ALFKI'");
-        }
-#endif
-
-        public override void Substring_with_client_eval()
-        {
-            base.Substring_with_client_eval();
-
-            AssertSql(
-                @"SELECT ""c"".""ContactName""
-FROM ""Customers"" AS ""c""
-WHERE ""c"".""CustomerID"" = 'ALFKI'");
-        }
-
-#if !Test20
-        public override void Substring_with_zero_length()
-        {
-            base.Substring_with_zero_length();
-
-            AssertSql(
-                @"SELECT substr(""c"".""ContactName"", 3, 0)
-FROM ""Customers"" AS ""c""
-WHERE ""c"".""CustomerID"" = 'ALFKI'");
-        }
 #endif
 
         public override void Where_math_abs1()
@@ -601,16 +528,6 @@ WHERE trim(""c"".""ContactTitle"", 'Or') = 'wne'");
         }
 
 #if !Test20
-        public override void Sum_with_coalesce()
-        {
-            base.Sum_with_coalesce();
-
-            AssertSql(
-                @"SELECT SUM(COALESCE(""p"".""UnitPrice"", '0.0'))
-FROM ""Products"" AS ""p""
-WHERE ""p"".""ProductID"" < 40");
-        }
-
         public override void Select_datetime_year_component()
         {
             base.Select_datetime_year_component();

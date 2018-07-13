@@ -577,21 +577,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Bitwise_projects_values_in_select()
-        {
-            AssertSingleResult<Gear>(
-                gs => gs
-                    .Where(g => (g.Rank & MilitaryRank.Corporal) == MilitaryRank.Corporal)
-                    .Select(
-                        b => new
-                        {
-                            BitwiseTrue = (b.Rank & MilitaryRank.Corporal) == MilitaryRank.Corporal,
-                            BitwiseFalse = (b.Rank & MilitaryRank.Corporal) == MilitaryRank.Sergeant,
-                            BitwiseValue = b.Rank & MilitaryRank.Corporal
-                        }).First());
-        }
-
-        [ConditionalFact]
         public virtual void Where_enum_has_flag()
         {
             // Constant
@@ -658,19 +643,6 @@ namespace Microsoft.EntityFrameworkCore.Query
 
             AssertQuery<Gear>(
                 gs => gs.Where(g => g.Rank.HasFlag(parameter)));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_enum_has_flag()
-        {
-            AssertSingleResult<Gear>(
-                gs => gs.Where(g => g.Rank.HasFlag(MilitaryRank.Corporal))
-                    .Select(
-                        b => new
-                        {
-                            hasFlagTrue = b.Rank.HasFlag(MilitaryRank.Corporal),
-                            hasFlagFalse = b.Rank.HasFlag(MilitaryRank.Sergeant)
-                        }).First());
         }
 
         [ConditionalFact]
@@ -1091,14 +1063,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Optional_Navigation_Null_Coalesce_To_Clr_Type()
-        {
-            AssertSingleResult<Weapon>(
-                ws => ws.OrderBy(w => w.Id).Select(w => new Weapon { IsAutomatic = (bool?)w.SynergyWith.IsAutomatic ?? false }).First(),
-                ws => ws.OrderBy(w => w.Id).Select(w => new Weapon { IsAutomatic = MaybeScalar<bool>(w.SynergyWith, () => w.SynergyWith.IsAutomatic) ?? false }).First());
-        }
-
-        [ConditionalFact]
         public virtual void Where_subquery_boolean()
         {
             AssertQuery<Gear>(
@@ -1219,28 +1183,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
             AssertQuery<Gear>(
                 gs => gs.Where(g => g.HasSoulPatch && g.Weapons.Concat(g.Weapons).OrderBy(w => w.Id).FirstOrDefault().IsAutomatic));
-        }
-
-        [ConditionalFact]
-        public virtual void Concat_with_count()
-        {
-            AssertSingleResult<Gear>(
-                gs => gs.Concat(gs).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Concat_scalars_with_count()
-        {
-            AssertSingleResult<Gear>(
-                gs => gs.Select(g => g.Nickname).Concat(gs.Select(g2 => g2.FullName)).Count());
-        }
-
-        [ConditionalFact]
-        public virtual void Concat_anonymous_with_count()
-        {
-            AssertSingleResult<Gear>(
-                gs => gs.Select(g => new { Gear = g, Name = g.Nickname })
-                    .Concat(gs.Select(g2 => new { Gear = g2, Name = g2.FullName })).Count());
         }
 
         [ConditionalFact(Skip = "issue #9007")]
@@ -1804,13 +1746,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Optional_navigation_type_compensation_works_with_all()
-        {
-            AssertSingleResult<CogTag>(
-                ts => ts.Where(t => t.Note != "K.I.A.").All(t => t.Gear.HasSoulPatch));
-        }
-
-        [ConditionalFact]
         public virtual void Optional_navigation_type_compensation_works_with_contains()
         {
             AssertQuery<CogTag, Gear>(
@@ -2138,30 +2073,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Sum_with_optional_navigation_is_translated_to_sql()
-        {
-            AssertSingleResult<Gear>(
-                gs => (from g in gs
-                       where g.Tag.Note != "Foo"
-                       select g.SquadId).Sum(),
-                gs => (from g in gs
-                       where Maybe(g.Tag, () => g.Tag.Note) != "Foo"
-                       select g.SquadId).Sum());
-        }
-
-        [ConditionalFact]
-        public virtual void Count_with_optional_navigation_is_translated_to_sql()
-        {
-            AssertSingleResult<Gear>(
-                gs => (from g in gs
-                       where g.Tag.Note != "Foo"
-                       select g.HasSoulPatch).Count(),
-                gs => (from g in gs
-                       where Maybe(g.Tag, () => g.Tag.Note) != "Foo"
-                       select g.HasSoulPatch).Count());
-        }
-
-        [ConditionalFact]
         public virtual void Distinct_with_unflattened_groupjoin_is_evaluated_on_client()
         {
             AssertQueryScalar<Gear, CogTag>(
@@ -2174,45 +2085,12 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Count_with_unflattened_groupjoin_is_evaluated_on_client()
-        {
-            AssertSingleResult<Gear, CogTag>(
-                (gs, ts) => gs
-                    .GroupJoin(
-                        ts,
-                        g => new { k1 = g.Nickname, k2 = (int?)g.SquadId },
-                        t => new { k1 = t.GearNickName, k2 = t.GearSquadId },
-                        (g, t) => g)
-                    .Count());
-        }
-
-        [ConditionalFact]
-        public virtual void FirstOrDefault_with_manually_created_groupjoin_is_translated_to_sql()
-        {
-            AssertSingleResult<Squad, Gear>(
-                (ss, gs) =>
-                    (from s in ss
-                     join g in gs on s.Id equals g.SquadId into grouping
-                     from g in grouping.DefaultIfEmpty()
-                     where s.Name == "Kilo"
-                     select s).FirstOrDefault());
-        }
-
-        [ConditionalFact]
         public virtual void Any_with_optional_navigation_as_subquery_predicate_is_translated_to_sql()
         {
             AssertQuery<Squad>(
                 ss => from s in ss
                       where !s.Members.Any(m => m.Tag.Note == "Dom's Tag")
                       select s.Name);
-        }
-
-        [ConditionalFact]
-        public virtual void All_with_optional_navigation_is_translated_to_sql()
-        {
-            AssertSingleResult<Gear>(
-                gs => (from g in gs
-                       select g).All(g => g.Tag.Note != "Foo"));
         }
 
         [ConditionalFact]
@@ -4127,13 +4005,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     Assert.Equal(expectedList[i].Name, actualList[i].Name);
                 }
             }
-        }
-
-        [ConditionalFact]
-        public virtual void Correlated_collection_with_top_level_Count()
-        {
-            AssertSingleResult<Gear>(
-                gs => gs.Select(g => g.Weapons).Count());
         }
 
         [ConditionalFact]

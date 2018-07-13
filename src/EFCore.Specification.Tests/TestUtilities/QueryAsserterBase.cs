@@ -13,62 +13,6 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
         public virtual ISetExtractor SetExtractor { get; set; }
         public virtual IExpectedData ExpectedData { get; set; }
 
-        #region AssertSingleResult
-
-        public abstract void AssertSingleResult<TItem1>(
-            Func<IQueryable<TItem1>, object> actualQuery,
-            Func<IQueryable<TItem1>, object> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class;
-
-        public abstract void AssertSingleResult<TItem1, TItem2>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, object> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, object> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class;
-
-        public abstract void AssertSingleResult<TItem1, TItem2, TItem3>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, object> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, object> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            where TItem3 : class;
-
-        #endregion
-
-        #region AssertSingleResult - async
-
-        public abstract Task AssertSingleResult<TItem1, TResult>(
-            Func<IQueryable<TItem1>, Task<TResult>> actualQuery,
-            Func<IQueryable<TItem1>, Task<TResult>> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class;
-
-        public abstract Task AssertSingleResult<TItem1, TItem2, TResult>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, Task<TResult>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, Task<TResult>> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class;
-
-        public abstract Task AssertSingleResult<TItem1, TItem2, TItem3, TResult>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, Task<TResult>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, Task<TResult>> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            where TItem3 : class;
-
-        #endregion
-
         #region AssertQuery
 
         public abstract Task AssertQuery<TItem1>(

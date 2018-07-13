@@ -833,59 +833,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Indexof_with_emptystring()
-        {
-            // ReSharper disable once StringIndexOfIsCultureSpecific.1
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI").Select(c => c.ContactName.IndexOf(string.Empty)));
-        }
-
-        [ConditionalFact]
-        public virtual void Replace_with_emptystring()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI").Select(c => c.ContactName.Replace("ari", string.Empty)));
-        }
-
-        [ConditionalFact]
-        public virtual void Substring_with_zero_startindex()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI").Select(c => c.ContactName.Substring(0, 3)));
-        }
-
-        [ConditionalFact]
-        public virtual void Substring_with_zero_length()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI").Select(c => c.ContactName.Substring(2, 0)));
-        }
-
-        [ConditionalFact]
-        public virtual void Substring_with_constant()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI").Select(c => c.ContactName.Substring(1, 3)));
-        }
-
-        [ConditionalFact]
-        public virtual void Substring_with_closure()
-        {
-            // ReSharper disable once ConvertToConstant.Local
-            var start = 2;
-
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI").Select(c => c.ContactName.Substring(start, 3)));
-        }
-
-        [ConditionalFact]
-        public virtual void Substring_with_client_eval()
-        {
-            AssertSingleResult<Customer>(
-                cs => cs.Where(c => c.CustomerID == "ALFKI").Select(c => c.ContactName.Substring(c.ContactName.IndexOf('a'), 3)));
-        }
-
-        [ConditionalFact]
         public virtual void IsNullOrEmpty_in_predicate()
         {
             AssertQuery<Customer>(

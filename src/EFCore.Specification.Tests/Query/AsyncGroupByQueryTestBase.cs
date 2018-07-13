@@ -1594,15 +1594,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual async Task GroupBy_first()
-        {
-            await AssertSingleResult<Order>(
-                os => os.Where(o => o.CustomerID == "ALFKI").GroupBy(o => o.CustomerID).Cast<object>().FirstAsync(),
-                asserter: GroupingAsserter<string, Order>(o => o.OrderID),
-                entryCount: 6);
-        }
-
-        [ConditionalFact]
         public virtual async Task GroupBy_with_element_selector()
         {
             await AssertQuery<Order>(
@@ -1986,26 +1977,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     Assert.Equal(expected[i].Lastest.Count(), actual[i].Lastest.Count());
                 }
             }
-        }
-
-        #endregion
-
-        #region ResultOperatorsAfterGroupBy
-
-        [ConditionalFact]
-        public virtual async Task Count_after_GroupBy()
-        {
-            await AssertSingleResult<Order>(
-                os => os.GroupBy(o => o.CustomerID).Select(g => g.Sum(gg => gg.OrderID)).CountAsync());
-        }
-
-        [ConditionalFact]
-        public virtual async Task LongCount_after_client_GroupBy()
-        {
-            await AssertSingleResult<Order>(
-                os => (from o in os
-                       group o by new { o.CustomerID } into g
-                       select g.Where(e => e.OrderID < 10300).Count()).LongCountAsync());
         }
 
         #endregion

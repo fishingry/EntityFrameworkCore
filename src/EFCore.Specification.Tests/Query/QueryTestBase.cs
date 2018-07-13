@@ -16,61 +16,6 @@ namespace Microsoft.EntityFrameworkCore.Query
 
         protected TFixture Fixture { get; }
 
-        #region AssertSingleResult
-
-        protected void AssertSingleResult<TItem1>(
-            Func<IQueryable<TItem1>, object> query,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            => AssertSingleResult(query, query, asserter, entryCount);
-
-        protected void AssertSingleResult<TItem1>(
-            Func<IQueryable<TItem1>, object> actualQuery,
-            Func<IQueryable<TItem1>, object> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            => Fixture.QueryAsserter.AssertSingleResult(actualQuery, expectedQuery, asserter, entryCount);
-
-        public void AssertSingleResult<TItem1, TItem2>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, object> query,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            => AssertSingleResult(query, query, asserter, entryCount);
-
-        public void AssertSingleResult<TItem1, TItem2>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, object> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, object> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            => Fixture.QueryAsserter.AssertSingleResult(actualQuery, expectedQuery, asserter, entryCount);
-
-        public void AssertSingleResult<TItem1, TItem2, TItem3>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, object> query,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            where TItem3 : class
-            => AssertSingleResult(query, query, asserter, entryCount);
-
-        public void AssertSingleResult<TItem1, TItem2, TItem3>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, object> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, object> expectedQuery,
-            Action<object, object> asserter = null,
-            int entryCount = 0)
-            where TItem1 : class
-            where TItem2 : class
-            where TItem3 : class
-            => Fixture.QueryAsserter.AssertSingleResult(actualQuery, expectedQuery, asserter, entryCount);
-
-        #endregion
-
         #region AssertQuery
 
         public void AssertQuery<TItem1>(
