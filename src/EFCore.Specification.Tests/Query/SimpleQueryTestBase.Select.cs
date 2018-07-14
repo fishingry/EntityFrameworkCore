@@ -206,38 +206,9 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_constant_int()
-        {
-            AssertQueryScalar<Customer>(cs => cs.Select(c => 0));
-        }
-
-        [ConditionalFact]
         public virtual void Select_constant_null_string()
         {
             AssertQuery<Customer>(cs => cs.Select(c => (string)null));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_local()
-        {
-            // ReSharper disable once ConvertToConstant.Local
-            var x = 10;
-
-            AssertQueryScalar<Customer>(cs => cs.Select(c => x));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_scalar_primitive()
-        {
-            AssertQueryScalar<Employee>(
-                es => es.Select(e => e.EmployeeID));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_scalar_primitive_after_take()
-        {
-            AssertQueryScalar<Employee>(
-                es => es.Take(9).Select(e => e.EmployeeID));
         }
 
         [ConditionalFact]
@@ -469,120 +440,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_non_matching_value_types_int_to_long_introduces_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (long)o.OrderID),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_nullable_int_to_long_introduces_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (long)o.EmployeeID),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_nullable_int_to_int_doesnt_introduce_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-#if Test20
-                    .Select(o => (int)o.EmployeeID),
-#else
-                    .Select(o => (uint)o.EmployeeID),
-#endif
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_int_to_nullable_int_doesnt_introduce_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (int?)o.OrderID),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_from_binary_expression_introduces_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (long)(o.OrderID + o.OrderID)),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_from_binary_expression_nested_introduces_top_level_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (short)((long)o.OrderID + (long)o.OrderID)),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_from_unary_expression_introduces_explicit_cast1()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (long)-o.OrderID),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_from_unary_expression_introduces_explicit_cast2()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => -((long)o.OrderID)),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_from_length_introduces_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (long)o.CustomerID.Length),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_non_matching_value_types_from_method_call_introduces_explicit_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os
-                    .Where(o => o.CustomerID == "ALFKI")
-                    .OrderBy(o => o.OrderID)
-                    .Select(o => (long)Math.Abs(o.OrderID)),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
         public virtual void Select_non_matching_value_types_from_anonymous_type_introduces_explicit_cast()
         {
             AssertQuery<Order>(
@@ -594,15 +451,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_conditional_with_null_comparison_in_test()
-        {
-            AssertQueryScalar<Order>(
-                os => from o in os
-                      where o.CustomerID == "ALFKI"
-                      select o.CustomerID == null ? true : o.OrderID < 100);
-        }
-
-        [ConditionalFact]
         public virtual void Projection_in_a_subquery_should_be_liftable()
         {
             AssertQuery<Employee>(
@@ -610,16 +458,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     .Select(e => string.Format("{0}", e.EmployeeID))
                     .Skip(1));
         }
-
-#if !Test20
-        [ConditionalFact]
-        public virtual void Projection_containing_DateTime_subtraction()
-        {
-            AssertQueryScalar<Order>(
-                os => os.Where(o => o.OrderID < 10300)
-                    .Select(o => o.OrderDate.Value - new DateTime(1997, 1, 1)));
-        }
-#endif
 
         [ConditionalFact]
         public virtual void Project_single_element_from_collection_with_OrderBy_Take_and_FirstOrDefault()
@@ -687,98 +525,12 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Project_single_element_from_collection_with_OrderBy_over_navigation_Take_and_FirstOrDefault()
-        {
-            AssertQueryScalar<Order>(
-                os => os.Where(o => o.OrderID < 10300)
-                .Select(
-                    o => o.OrderDetails.OrderBy(od => od.Product.ProductName).Select(od => od.OrderID).Take(1).FirstOrDefault()));
-        }
-
-        [ConditionalFact]
         public virtual void Project_single_element_from_collection_with_OrderBy_over_navigation_Take_and_FirstOrDefault_2()
         {
             AssertQuery<Order>(
                 os => os.Where(o => o.OrderID < 10250)
                 .Select(
                     o => o.OrderDetails.OrderBy(od => od.Product.ProductName).Take(1).FirstOrDefault()));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_year_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.Year));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_month_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.Month));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_day_of_year_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.DayOfYear));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_day_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.Day));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_hour_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.Hour));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_minute_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.Minute));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_second_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.Second));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_datetime_millisecond_component()
-        {
-            AssertQueryScalar<Order>(os => os.Select(o => o.OrderDate.Value.Millisecond));
-        }
-
-#if !Test20
-        [ConditionalFact]
-        public virtual void Select_byte_constant()
-        {
-            AssertQueryScalar<Customer, byte>(cs => cs.Select(c => c.CustomerID == "ALFKI" ? (byte)1 : (byte)2));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_short_constant()
-        {
-            AssertQueryScalar<Customer, short>(cs => cs.Select(c => c.CustomerID == "ALFKI" ? (short)1 : (short)2));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_bool_constant()
-        {
-            AssertQueryScalar<Customer, bool>(cs => cs.Select(c => c.CustomerID == "ALFKI" ? true : false));
-        }
-#endif
-
-        [ConditionalFact]
-        public virtual void Anonymous_projection_AsNoTracking_Selector()
-        {
-            AssertQueryScalar<Order>(
-                os => os.Select(o => new { A = o.CustomerID, B = o.OrderDate })
-                    .AsNoTracking() // Just to cause a subquery
-                    .Select(e => e.B));
         }
 
         [ConditionalFact]

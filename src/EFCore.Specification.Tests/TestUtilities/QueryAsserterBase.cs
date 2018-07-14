@@ -49,52 +49,5 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             where TItem3 : class;
 
         #endregion
-
-        #region AssertQueryScalar
-
-        public abstract Task AssertQueryScalar<TItem1, TResult>(
-            Func<IQueryable<TItem1>, IQueryable<TResult>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TResult>> expectedQuery,
-            bool assertOrder = false,
-            bool isAsync = false)
-            where TItem1 : class;
-
-        public abstract Task AssertQueryScalar<TItem1, TItem2, TResult>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TResult>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TResult>> expectedQuery,
-            bool assertOrder = false,
-            bool isAsync = false)
-            where TItem1 : class
-            where TItem2 : class;
-
-        public abstract Task AssertQueryScalar<TItem1, TItem2, TItem3, TResult>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, IQueryable<TResult>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TItem3>, IQueryable<TResult>> expectedQuery,
-            bool assertOrder = false,
-            bool isAsync = false)
-            where TItem1 : class
-            where TItem2 : class
-            where TItem3 : class;
-
-        #endregion
-
-        #region AssertQueryScalar - nullable
-
-        public abstract void AssertQueryScalar<TItem1, TResult>(
-            Func<IQueryable<TItem1>, IQueryable<TResult?>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TResult?>> expectedQuery,
-            bool assertOrder = false)
-            where TItem1 : class
-            where TResult : struct;
-
-        public abstract void AssertQueryScalar<TItem1, TItem2, TResult>(
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TResult?>> actualQuery,
-            Func<IQueryable<TItem1>, IQueryable<TItem2>, IQueryable<TResult?>> expectedQuery,
-            bool assertOrder = false)
-            where TItem1 : class
-            where TItem2 : class
-            where TResult : struct;
-
-        #endregion
     }
 }

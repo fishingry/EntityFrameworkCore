@@ -449,14 +449,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Collection_select_nav_prop_predicate()
-        {
-            AssertQueryScalar<Customer>(
-                cs => cs.Select(c => c.Orders.Count > 0),
-                cs => cs.Select(c => (c.Orders ?? new List<Order>()).Count > 0));
-        }
-
-        [ConditionalFact]
         public virtual void Collection_where_nav_prop_any()
         {
             AssertQuery<Customer>(
@@ -988,18 +980,6 @@ namespace Microsoft.EntityFrameworkCore.Query
             AssertQuery<Order>(
                 os => os.Where(o => o.Customer.Orders.Count(oo => oo.OrderID > 10260) > 30),
                 entryCount: 31);
-        }
-
-        [ConditionalFact]
-        public virtual void Client_groupjoin_with_orderby_key_descending()
-        {
-            AssertQueryScalar<Customer, Order>(
-                (cs, os) =>
-                    from c in cs
-                    join o in os on c.CustomerID equals o.CustomerID into grouping
-                    where c.CustomerID.StartsWith("A")
-                    orderby c.CustomerID descending
-                    select grouping.Count());
         }
 
         [ConditionalFact]

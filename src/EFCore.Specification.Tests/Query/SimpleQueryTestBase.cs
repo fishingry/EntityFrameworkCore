@@ -1396,14 +1396,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void OrderBy_scalar_primitive()
-        {
-            AssertQueryScalar<Employee>(
-                es => es.Select(e => e.EmployeeID).OrderBy(i => i),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
         public virtual void SelectMany_mixed()
         {
             AssertQuery<Employee, Customer>(
@@ -1565,24 +1557,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void SelectMany_primitive()
-        {
-            AssertQueryScalar<Employee>(
-                es => from e1 in es
-                      from i in es.Select(e2 => e2.EmployeeID)
-                      select i);
-        }
-
-        [ConditionalFact]
-        public virtual void SelectMany_primitive_select_subquery()
-        {
-            AssertQueryScalar<Employee>(
-                es => from e1 in es
-                      from i in es.Select(e2 => e2.EmployeeID)
-                      select es.Any());
-        }
-
-        [ConditionalFact]
         public virtual void Where_join_select()
         {
             AssertQuery<Customer, Order>(
@@ -1685,15 +1659,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     from e in es.Where(c => c.EmployeeID > 0).DefaultIfEmpty()
                     select e,
                 entryCount: 9);
-        }
-
-        [ConditionalFact]
-        public virtual void Default_if_empty_top_level_projection()
-        {
-            AssertQueryScalar<Employee>(
-                es =>
-                    from e in es.Where(e => e.EmployeeID == NonExistentID).Select(e => e.EmployeeID).DefaultIfEmpty()
-                    select e);
         }
 
         [ConditionalFact]
@@ -2145,15 +2110,6 @@ namespace Microsoft.EntityFrameworkCore.Query
             AssertQuery<Customer>(
                 cs => cs.OrderBy(c => c.Region ?? "ZZ").Take(10).Skip(5),
                 entryCount: 5);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_Property_when_non_shadow()
-        {
-            AssertQueryScalar<Order>(
-                os =>
-                    from o in os
-                    select EF.Property<int>(o, "OrderID"));
         }
 
         [ConditionalFact]
@@ -2932,17 +2888,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                                 .AddMilliseconds(o.OrderDate.Value.Millisecond % millisecondsPerDay)
                         }),
                 e => e.OrderDate);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_expression_references_are_updated_correctly_with_subquery()
-        {
-            var nextYear = 2017;
-            AssertQueryScalar<Order>(
-                os => os.Where(o => o.OrderDate != null)
-                    .Select(o => o.OrderDate.Value.Year)
-                    .Distinct()
-                    .Where(x => x < nextYear));
         }
 
         [ConditionalFact]

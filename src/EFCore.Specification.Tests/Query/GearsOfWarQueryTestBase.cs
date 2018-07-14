@@ -453,20 +453,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_null_propagation_optimization9()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => g != null ? (int?)g.FullName.Length : (int?)null));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_null_propagation_negative1()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => g.LeaderNickname != null ? (bool?)(g.Nickname.Length == 5) : (bool?)null));
-        }
-
-        [ConditionalFact]
         public virtual void Select_null_propagation_negative2()
         {
             AssertQuery<Gear>(
@@ -524,21 +510,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                       orderby Maybe(g2, () => g2.Nickname)
                       select g2 != null ? new { Nickname = Maybe(g2, () => g2.Nickname), Five = 5 } : null,
                 assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_null_propagation_negative6()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => null != g.LeaderNickname ? EF.Property<string>(g, "LeaderNickname").Length != EF.Property<string>(g, "LeaderNickname").Length : (bool?)null),
-                gs => gs.Select(g => null != g.LeaderNickname ? g.LeaderNickname.Length != g.LeaderNickname.Length : (bool?)null));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_null_propagation_negative7()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => null != g.LeaderNickname ? g.LeaderNickname == g.LeaderNickname : (bool?)null));
         }
 
         [ConditionalFact]
@@ -853,33 +824,12 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_navigation_with_concat_and_count()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => !g.HasSoulPatch).Select(g => g.Weapons.Concat(g.Weapons).Count()));
-        }
-
-        [ConditionalFact]
         public virtual void Where_subquery_concat_order_by_firstordefault_boolean()
         {
             AssertQuery<Gear>(
                 gs => gs.GroupBy(g => g.LeaderNickname).Concat(gs.GroupBy(g => g.LeaderNickname)),
                 elementSorter: GroupingSorter<string, Gear>(),
                 elementAsserter: GroupingAsserter<string, Gear>(g => g.Nickname, (e, a) => Assert.Equal(e.Nickname, a.Nickname)));
-        }
-
-        [ConditionalFact]
-        public virtual void Concat_with_collection_navigations()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => g.Weapons.Union(g.Weapons).Count()));
-        }
-
-        [ConditionalFact]
-        public virtual void Union_with_collection_navigations()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.OfType<Officer>().Select(o => o.Reports.Union(o.Reports).Count()));
         }
 
         [ConditionalFact]
@@ -1138,13 +1088,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Coalesce_operator_in_projection_with_other_conditions()
-        {
-            AssertQueryScalar<Weapon>(
-                ws => ws.Select(w => w.AmmunitionType == AmmunitionType.Cartridge && ((bool?)w.IsAutomatic ?? false)));
-        }
-
-        [ConditionalFact]
         public virtual void Optional_navigation_type_compensation_works_with_predicate()
         {
             AssertQuery<CogTag>(
@@ -1197,21 +1140,6 @@ namespace Microsoft.EntityFrameworkCore.Query
             AssertQuery<CogTag>(
                 ts => ts.Where(t => t.Gear.HasSoulPatch || t.Note.Contains("Cole")),
                 ts => ts.Where(t => MaybeScalar<bool>(t.Gear, () => t.Gear.HasSoulPatch) == true || t.Note.Contains("Cole")));
-        }
-
-        [ConditionalFact]
-        public virtual void Optional_navigation_type_compensation_works_with_binary_and_expression()
-        {
-            AssertQueryScalar<CogTag>(
-                ts => ts.Select(t => t.Gear.HasSoulPatch && t.Note.Contains("Cole")),
-                ts => ts.Select(t => MaybeScalar<bool>(t.Gear, () => t.Gear.HasSoulPatch) == true && t.Note.Contains("Cole")));
-        }
-
-        [ConditionalFact]
-        public virtual void Optional_navigation_type_compensation_works_with_projection()
-        {
-            AssertQueryScalar<CogTag>(
-                ts => ts.Where(t => t.Note != "K.I.A.").Select(t => t.Gear.SquadId));
         }
 
         [ConditionalFact]
@@ -1489,62 +1417,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void DateTimeOffset_DateAdd_AddYears()
-        {
-            AssertQueryScalar<Mission>(
-                ms => from m in ms
-                      select m.Timeline.AddYears(1));
-        }
-
-        [ConditionalFact]
-        public virtual void DateTimeOffset_DateAdd_AddMonths()
-        {
-            AssertQueryScalar<Mission>(
-                ms => from m in ms
-                      select m.Timeline.AddMonths(1));
-        }
-
-        [ConditionalFact]
-        public virtual void DateTimeOffset_DateAdd_AddDays()
-        {
-            AssertQueryScalar<Mission>(
-                ms => from m in ms
-                      select m.Timeline.AddDays(1));
-        }
-
-        [ConditionalFact]
-        public virtual void DateTimeOffset_DateAdd_AddHours()
-        {
-            AssertQueryScalar<Mission>(
-                ms => from m in ms
-                      select m.Timeline.AddHours(1));
-        }
-
-        [ConditionalFact]
-        public virtual void DateTimeOffset_DateAdd_AddMinutes()
-        {
-            AssertQueryScalar<Mission>(
-                ms => from m in ms
-                      select m.Timeline.AddMinutes(1));
-        }
-
-        [ConditionalFact]
-        public virtual void DateTimeOffset_DateAdd_AddSeconds()
-        {
-            AssertQueryScalar<Mission>(
-                ms => from m in ms
-                      select m.Timeline.AddSeconds(1));
-        }
-
-        [ConditionalFact]
-        public virtual void DateTimeOffset_DateAdd_AddMilliseconds()
-        {
-            AssertQueryScalar<Mission>(
-                ms => from m in ms
-                      select m.Timeline.AddMilliseconds(300));
-        }
-
-        [ConditionalFact]
         public virtual void Orderby_added_for_client_side_GroupJoin_composite_dependent_to_principal_LOJ_when_incomplete_key_is_used()
         {
             AssertQuery<CogTag, Gear>(
@@ -1578,47 +1450,12 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Distinct_with_optional_navigation_is_translated_to_sql()
-        {
-            AssertQueryScalar<Gear>(
-                gs => (from g in gs
-                       where g.Tag.Note != "Foo"
-                       select g.HasSoulPatch).Distinct(),
-                gs => (from g in gs
-                       where Maybe(g.Tag, () => g.Tag.Note) != "Foo"
-                       select g.HasSoulPatch).Distinct());
-        }
-
-        [ConditionalFact]
-        public virtual void Distinct_with_unflattened_groupjoin_is_evaluated_on_client()
-        {
-            AssertQueryScalar<Gear, CogTag>(
-                (gs, ts) => gs.GroupJoin(
-                        ts,
-                        g => new { k1 = g.Nickname, k2 = (int?)g.SquadId },
-                        t => new { k1 = t.GearNickName, k2 = t.GearSquadId },
-                        (g, t) => g.HasSoulPatch)
-                    .Distinct());
-        }
-
-        [ConditionalFact]
         public virtual void Any_with_optional_navigation_as_subquery_predicate_is_translated_to_sql()
         {
             AssertQuery<Squad>(
                 ss => from s in ss
                       where !s.Members.Any(m => m.Tag.Note == "Dom's Tag")
                       select s.Name);
-        }
-
-        [ConditionalFact]
-        public virtual void Non_flattened_GroupJoin_with_result_operator_evaluates_on_the_client()
-        {
-            AssertQueryScalar<CogTag, Gear>(
-                (ts, gs) => ts.GroupJoin(
-                    gs,
-                    t => new { k1 = t.GearNickName, k2 = t.GearSquadId },
-                    g => new { k1 = g.Nickname, k2 = (int?)g.SquadId },
-                    (k, r) => r.Count()));
         }
 
         [ConditionalFact]
@@ -4060,82 +3897,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
             AssertQuery<Gear>(
                 gs => gs.OfType<Officer>().Cast<Officer>());
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_boolean()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => g.Weapons.OrderBy(w => w.Id).Select(w => w.IsAutomatic).FirstOrDefault()));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_boolean_with_pushdown()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => g.Weapons.OrderBy(w => w.Id).FirstOrDefault().IsAutomatic));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_boolean_empty()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => g.Weapons.Where(w => w.Name == "BFG").OrderBy(w => w.Id).Select(w => w.IsAutomatic).FirstOrDefault()));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_boolean_empty_with_pushdown()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Select(g => (bool?)g.Weapons.Where(w => w.Name == "BFG").OrderBy(w => w.Id).FirstOrDefault().IsAutomatic),
-                gs => gs.Select(g => (bool?)null));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_distinct_singleordefault_boolean1()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => g.Weapons.Where(w => w.Name.Contains("Lancer")).Distinct().Select(w => w.IsAutomatic).SingleOrDefault()),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_distinct_singleordefault_boolean2()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => g.Weapons.Where(w => w.Name.Contains("Lancer")).Select(w => w.IsAutomatic).Distinct().SingleOrDefault()),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_distinct_singleordefault_boolean_with_pushdown()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => g.Weapons.Where(w => w.Name.Contains("Lancer")).Distinct().SingleOrDefault().IsAutomatic),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_distinct_singleordefault_boolean_empty1()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => g.Weapons.Where(w => w.Name == "BFG").Distinct().Select(w => w.IsAutomatic).SingleOrDefault()));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_distinct_singleordefault_boolean_empty2()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => g.Weapons.Where(w => w.Name == "BFG").Select(w => w.IsAutomatic).Distinct().SingleOrDefault()));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_distinct_singleordefault_boolean_empty_with_pushdown()
-        {
-            AssertQueryScalar<Gear>(
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => (bool?)g.Weapons.Where(w => w.Name == "BFG").Distinct().SingleOrDefault().IsAutomatic),
-                gs => gs.Where(g => g.HasSoulPatch).Select(g => (bool?)null),
-                assertOrder: true);
         }
 
         [ConditionalFact]

@@ -1161,13 +1161,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual async Task Where_primitive()
-        {
-            await AssertQueryScalar<Employee>(
-                es => es.Select(e => e.EmployeeID).Take(9).Where(i => i == 5));
-        }
-
-        [ConditionalFact]
         public virtual async Task Where_primitive_tracked()
         {
             await AssertQuery<Employee>(
@@ -1529,38 +1522,9 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual async Task Select_constant_int()
-        {
-            await AssertQueryScalar<Customer>(cs => cs.Select(c => 0));
-        }
-
-        [ConditionalFact]
         public virtual async Task Select_constant_null_string()
         {
             await AssertQuery<Customer>(cs => cs.Select(c => (string)null));
-        }
-
-        [ConditionalFact]
-        public virtual async Task Select_local()
-        {
-            // ReSharper disable once ConvertToConstant.Local
-            var x = 10;
-
-            await AssertQueryScalar<Customer>(cs => cs.Select(c => x));
-        }
-
-        [ConditionalFact]
-        public virtual async Task Select_scalar_primitive()
-        {
-            await AssertQueryScalar<Employee>(
-                es => es.Select(e => e.EmployeeID));
-        }
-
-        [ConditionalFact]
-        public virtual async Task Select_scalar_primitive_after_take()
-        {
-            await AssertQueryScalar<Employee>(
-                es => es.Take(9).Select(e => e.EmployeeID));
         }
 
         [ConditionalFact]
@@ -1760,14 +1724,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual async Task OrderBy_scalar_primitive()
-        {
-            await AssertQueryScalar<Employee>(
-                es => es.Select(e => e.EmployeeID).OrderBy(i => i),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
         public virtual async Task SelectMany_mixed()
         {
             await AssertQuery<Employee, Customer>(
@@ -1904,26 +1860,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     select new { c, e.City },
                 assertOrder: true,
                 entryCount: 8);
-        }
-
-        [ConditionalFact]
-        public virtual async Task SelectMany_primitive()
-        {
-            await AssertQueryScalar<Employee>(
-                es =>
-                    from e1 in es
-                    from i in es.Select(e2 => e2.EmployeeID)
-                    select i);
-        }
-
-        [ConditionalFact]
-        public virtual async Task SelectMany_primitive_select_subquery()
-        {
-            await AssertQueryScalar<Employee>(
-                es =>
-                    from e1 in es
-                    from i in es.Select(e2 => e2.EmployeeID)
-                    select es.Any());
         }
 
         [ConditionalFact]
@@ -2110,15 +2046,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     from e in es.Where(c => c.EmployeeID > 0).DefaultIfEmpty()
                     select e,
                 entryCount: 9);
-        }
-
-        [ConditionalFact]
-        public virtual async Task Default_if_empty_top_level_projection()
-        {
-            await AssertQueryScalar<Employee>(
-                es =>
-                    from e in es.Where(e => e.EmployeeID == NonExistentID).Select(e => e.EmployeeID).DefaultIfEmpty()
-                    select e);
         }
 
         [ConditionalFact]

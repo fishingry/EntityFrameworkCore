@@ -947,13 +947,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Where_primitive()
-        {
-            AssertQueryScalar<Employee>(
-                es => es.Select(e => e.EmployeeID).Take(9).Where(i => i == 5));
-        }
-
-        [ConditionalFact]
         public virtual void Where_primitive_tracked()
         {
             AssertQuery<Employee>(

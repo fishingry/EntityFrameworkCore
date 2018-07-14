@@ -196,74 +196,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Join_local_collection_int_closure_is_cached_correctly()
-        {
-#if Test20
-            var ids = new int[] { 1, 2 };
-#else
-            var ids = new uint[] { 1, 2 };
-#endif
-
-            AssertQueryScalar<Employee>(
-                es =>
-                    from e in es
-                    join id in ids on e.EmployeeID equals id
-                    select e.EmployeeID);
-
-#if Test20
-            ids = new int[] { 3 };
-#else
-            ids = new uint[] { 3 };
-#endif
-
-            AssertQueryScalar<Employee>(
-                es =>
-                    from e in es
-                    join id in ids on e.EmployeeID equals id
-                    select e.EmployeeID);
-        }
-
-        [ConditionalFact]
-        public virtual void Join_local_string_closure_is_cached_correctly()
-        {
-            var ids = "12";
-
-            AssertQueryScalar<Employee>(
-                es =>
-                    from e in es
-                    join id in ids on e.EmployeeID equals id
-                    select e.EmployeeID);
-
-            ids = "3";
-
-            AssertQueryScalar<Employee>(
-                es =>
-                    from e in es
-                    join id in ids on e.EmployeeID equals id
-                    select e.EmployeeID);
-        }
-
-        [ConditionalFact]
-        public virtual void Join_local_bytes_closure_is_cached_correctly()
-        {
-            var ids = new byte[] { 1, 2 };
-
-            AssertQueryScalar<Employee>(
-                es =>
-                    from e in es
-                    join id in ids on e.EmployeeID equals id
-                    select e.EmployeeID);
-
-            ids = new byte[] { 3 };
-
-            AssertQueryScalar<Employee>(
-                es =>
-                    from e in es
-                    join id in ids on e.EmployeeID equals id
-                    select e.EmployeeID);
-        }
-
-        [ConditionalFact]
         public virtual void Join_same_collection_multiple()
         {
             AssertQuery<Customer, Customer, Customer>(
@@ -785,32 +717,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     select new { c.ContactName, o },
                 e => e.ContactName + " " + e.o?.OrderID,
                 entryCount: 830);
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_order_by_key_descending1()
-        {
-            AssertQueryScalar<Customer, Order>(
-                (cs, os) =>
-                    from c in cs
-                    join o in os on c.CustomerID equals o.CustomerID into grouping
-                    where c.CustomerID.StartsWith("A")
-                    orderby c.CustomerID descending
-                    select grouping.Count(),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_order_by_key_descending2()
-        {
-            AssertQueryScalar<Customer, Order>(
-                (cs, os) =>
-                    from c in cs
-                    orderby c.CustomerID descending
-                    join o in os on c.CustomerID equals o.CustomerID into grouping
-                    where c.CustomerID.StartsWith("A")
-                    select grouping.Count(),
-                assertOrder: true);
         }
     }
 }

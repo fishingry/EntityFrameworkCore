@@ -296,20 +296,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Navigation_key_access_optional_comparison()
-        {
-            AssertQueryScalar<Level2>(
-                l2s =>
-                    from e2 in l2s
-                    where e2.OneToOne_Optional_PK_Inverse.Id > 5
-                    select e2.Id,
-                l2s =>
-                    from e2 in l2s
-                    where MaybeScalar<int>(e2.OneToOne_Optional_PK_Inverse, () => e2.OneToOne_Optional_PK_Inverse.Id) > 5
-                    select e2.Id);
-        }
-
-        [ConditionalFact]
         public virtual void Simple_owned_level1()
         {
             AssertQuery<Level1>(l1s => l1s.Include(l1 => l1.OneToOne_Required_PK), elementSorter: e => e.Id);
@@ -328,54 +314,12 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Simple_owned_level1_level2_GroupBy_Count()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s.GroupBy(
-                            l1 => l1.OneToOne_Required_PK.OneToOne_Required_PK.Name)
-                        .Select(g => g.Count()),
-                l1s => l1s.GroupBy(
-                            l1 => Maybe(l1.OneToOne_Required_PK,
-                                () => Maybe(l1.OneToOne_Required_PK.OneToOne_Required_PK,
-                                    () => l1.OneToOne_Required_PK.OneToOne_Required_PK.Name)))
-                        .Select(g => g.Count()));
-        }
-
-        [ConditionalFact]
-        public virtual void Simple_owned_level1_level2_GroupBy_Having_Count()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s.GroupBy(
-                            l1 => l1.OneToOne_Required_PK.OneToOne_Required_PK.Name,
-                            l1 => new { Id = ((int?)l1.OneToOne_Required_PK.Id ?? 0) })
-                        .Where(g => g.Min(l1 => l1.Id) > 0)
-                        .Select(g => g.Count()),
-                l1s => l1s.GroupBy(
-                            l1 => Maybe(l1.OneToOne_Required_PK,
-                                () => Maybe(l1.OneToOne_Required_PK.OneToOne_Required_PK,
-                                    () => l1.OneToOne_Required_PK.OneToOne_Required_PK.Name)),
-                            l1 => new { Id = (MaybeScalar<int>(l1.OneToOne_Required_PK, () => l1.OneToOne_Required_PK.Id) ?? 0) })
-                        .Where(g => g.Min(l1 => l1.Id) > 0)
-                        .Select(g => g.Count()));
-        }
-
-        [ConditionalFact]
         public virtual void Simple_owned_level1_level2_level3()
         {
             AssertQuery<Level1>(
                 l1s
                     => l1s.Include(l1 => l1.OneToOne_Required_PK.OneToOne_Required_PK.OneToOne_Required_PK),
                 elementSorter: e => e.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Navigation_key_access_required_comparison()
-        {
-            AssertQueryScalar<Level2>(
-                l2s =>
-                    from e2 in l2s
-                    where e2.OneToOne_Required_PK_Inverse.Id > 5
-                    select e2.Id);
         }
 
         [ConditionalFact]
@@ -729,108 +673,11 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_nav_prop_reference_optional2()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s.Select(e => (int?)e.OneToOne_Optional_FK.Id),
-                l1s => l1s.Select(e => MaybeScalar<int>(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Id)));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_nav_prop_reference_optional2_via_DefaultIfEmpty()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                    from l2 in groupJoin.DefaultIfEmpty()
-                    select l2 == null ? null : (int?)l2.Id,
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals MaybeScalar(l2, () => l2.Level1_Optional_Id) into groupJoin
-                    from l2 in Maybe(groupJoin, () => groupJoin.DefaultIfEmpty())
-                    select l2 == null ? null : (int?)l2.Id);
-        }
-
-        [ConditionalFact]
         public virtual void Select_nav_prop_reference_optional3()
         {
             AssertQuery<Level2>(
                 l2s => l2s.Select(e => e.OneToOne_Optional_FK_Inverse.Name),
                 l2s => l2s.Select(e => Maybe(e.OneToOne_Optional_FK_Inverse, () => e.OneToOne_Optional_FK_Inverse.Name)));
-        }
-
-        [ConditionalFact]
-        public virtual void Where_nav_prop_reference_optional1()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s
-                    .Where(e => e.OneToOne_Optional_FK.Name == "L2 05" || e.OneToOne_Optional_FK.Name == "L2 07")
-                    .Select(e => e.Id),
-                l1s => l1s
-                    .Where(
-                        e => Maybe(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Name) == "L2 05"
-                             || Maybe(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Name) == "L2 07")
-                    .Select(e => e.Id));
-        }
-
-        [ConditionalFact]
-        public virtual void Where_nav_prop_reference_optional1_via_DefaultIfEmpty()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2Left in l2s on l1.Id equals l2Left.Level1_Optional_Id into groupJoinLeft
-                    from l2Left in groupJoinLeft.DefaultIfEmpty()
-                    join l2Right in l2s on l1.Id equals l2Right.Level1_Optional_Id into groupJoinRight
-                    from l2Right in groupJoinRight.DefaultIfEmpty()
-#pragma warning disable IDE0031 // Use null propagation
-                    where (l2Left == null ? null : l2Left.Name) == "L2 05" || (l2Right == null ? null : l2Right.Name) == "L2 07"
-#pragma warning restore IDE0031 // Use null propagation
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Where_nav_prop_reference_optional2()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s
-                    .Where(e => e.OneToOne_Optional_FK.Name == "L2 05" || e.OneToOne_Optional_FK.Name != "L2 42")
-                    .Select(e => e.Id),
-                l1s => l1s
-                    .Where(
-                        e => Maybe(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Name) == "L2 05"
-                             || Maybe(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Name) != "L2 42")
-                    .Select(e => e.Id));
-        }
-
-        [ConditionalFact]
-        public virtual void Where_nav_prop_reference_optional2_via_DefaultIfEmpty()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2Left in l2s on l1.Id equals l2Left.Level1_Optional_Id into groupJoinLeft
-                    from l2Left in groupJoinLeft.DefaultIfEmpty()
-                    join l2Right in l2s on l1.Id equals l2Right.Level1_Optional_Id into groupJoinRight
-                    from l2Right in groupJoinRight.DefaultIfEmpty()
-#pragma warning disable IDE0031 // Use null propagation
-                    where (l2Left == null ? null : l2Left.Name) == "L2 05" || (l2Right == null ? null : l2Right.Name) != "L2 42"
-#pragma warning restore IDE0031 // Use null propagation
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Select_multiple_nav_prop_reference_optional()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s.Select(e => (int?)e.OneToOne_Optional_FK.OneToOne_Optional_FK.Id),
-                l1s => l1s.Select(
-                    e => MaybeScalar(
-                        e.OneToOne_Optional_FK,
-                        () => MaybeScalar<int>(
-                            e.OneToOne_Optional_FK.OneToOne_Optional_FK,
-                            () => e.OneToOne_Optional_FK.OneToOne_Optional_FK.Id))));
         }
 
         [ConditionalFact]
@@ -959,42 +806,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Select_multiple_nav_prop_reference_required()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s.Select(e => (int?)e.OneToOne_Required_FK.OneToOne_Required_FK.Id),
-                l1s => l1s.Select(
-                    e => MaybeScalar(
-                        e.OneToOne_Required_FK,
-                        () => MaybeScalar<int>(
-                            e.OneToOne_Required_FK.OneToOne_Required_FK,
-                            () => e.OneToOne_Required_FK.OneToOne_Required_FK.Id))));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_multiple_nav_prop_reference_required2()
-        {
-            AssertQueryScalar<Level3>(
-                l3s => l3s.Select(e => e.OneToOne_Required_FK_Inverse.OneToOne_Required_FK_Inverse.Id));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_multiple_nav_prop_optional_required()
-        {
-            AssertQueryScalar<Level1>(
-                l1s =>
-                    from l1 in l1s
-                    select (int?)l1.OneToOne_Optional_FK.OneToOne_Required_FK.Id,
-                l1s =>
-                    from l1 in l1s
-                    select MaybeScalar(
-                        l1.OneToOne_Optional_FK,
-                        () => MaybeScalar<int>(
-                            l1.OneToOne_Optional_FK.OneToOne_Required_FK,
-                            () => l1.OneToOne_Optional_FK.OneToOne_Required_FK.Id)));
-        }
-
-        [ConditionalFact]
         public virtual void Where_multiple_nav_prop_optional_required()
         {
             AssertQuery<Level1>(
@@ -1081,67 +892,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                           || l2.OneToOne_Required_FK_Inverse.Name != "Bar"
                     select new { Id1 = (int?)l1.Id, Id2 = (int?)l2.Id },
                 e => e.Id1 + " " + e.Id2);
-        }
-
-        [ConditionalFact]
-        public virtual void Where_complex_predicate_with_with_nav_prop_and_OrElse2()
-        {
-            AssertQueryScalar<Level1>(
-                l1s =>
-                    from l1 in l1s
-                    where l1.OneToOne_Optional_FK.OneToOne_Required_FK.Name == "L3 05" || l1.OneToOne_Optional_FK.Name != "L2 05"
-                    select l1.Id,
-                l1s =>
-                    from l1 in l1s
-                    where Maybe(
-                              l1.OneToOne_Optional_FK,
-                              () => Maybe(
-                                  l1.OneToOne_Optional_FK.OneToOne_Required_FK,
-                                  () => l1.OneToOne_Optional_FK.OneToOne_Required_FK.Name)) == "L3 05"
-                          || Maybe(
-                              l1.OneToOne_Optional_FK,
-                              () => l1.OneToOne_Optional_FK.Name) != "L2 05"
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Where_complex_predicate_with_with_nav_prop_and_OrElse3()
-        {
-            AssertQueryScalar<Level1>(
-                l1s =>
-                    from l1 in l1s
-                    where l1.OneToOne_Optional_FK.Name != "L2 05" || l1.OneToOne_Required_FK.OneToOne_Optional_FK.Name == "L3 05"
-                    select l1.Id,
-                l1s =>
-                    from l1 in l1s
-                    where Maybe(
-                              l1.OneToOne_Optional_FK,
-                              () => l1.OneToOne_Optional_FK.Name) != "L2 05"
-                          || Maybe(
-                              l1.OneToOne_Required_FK,
-                              () => Maybe(
-                                  l1.OneToOne_Required_FK.OneToOne_Optional_FK,
-                                  () => l1.OneToOne_Required_FK.OneToOne_Optional_FK.Name)) == "L3 05"
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Where_complex_predicate_with_with_nav_prop_and_OrElse4()
-        {
-            AssertQueryScalar<Level3>(
-                l3s =>
-                    from l3 in l3s
-                    where l3.OneToOne_Optional_FK_Inverse.Name != "L2 05" || l3.OneToOne_Required_FK_Inverse.OneToOne_Optional_FK_Inverse.Name == "L1 05"
-                    select l3.Id,
-                l3s =>
-                    from l3 in l3s
-                    where Maybe(
-                              l3.OneToOne_Optional_FK_Inverse,
-                              () => l3.OneToOne_Optional_FK_Inverse.Name) != "L2 05"
-                          || Maybe(
-                              l3.OneToOne_Required_FK_Inverse.OneToOne_Optional_FK_Inverse,
-                              () => l3.OneToOne_Required_FK_Inverse.OneToOne_Optional_FK_Inverse.Name) == "L1 05"
-                    select l3.Id);
         }
 
         [ConditionalFact]
@@ -1272,32 +1022,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void OrderBy_nav_prop_reference_optional()
-        {
-            AssertQueryScalar<Level1>(
-                l1s =>
-                    l1s.OrderBy(e => e.OneToOne_Optional_FK.Name).ThenBy(e => e.Id).Select(e => e.Id),
-                l1s =>
-                    l1s.OrderBy(e => Maybe(e.OneToOne_Optional_FK, () => e.OneToOne_Optional_FK.Name)).ThenBy(e => e.Id).Select(e => e.Id),
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
-        public virtual void OrderBy_nav_prop_reference_optional_via_DefaultIfEmpty()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                    from l2 in groupJoin.DefaultIfEmpty()
-#pragma warning disable IDE0031 // Use null propagation
-                    orderby l2 == null ? null : l2.Name, l1.Id
-#pragma warning restore IDE0031 // Use null propagation
-                    select l1.Id,
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
         public virtual void Join_flattening_bug_4539()
         {
             AssertQuery<Level1, Level2>(
@@ -1309,32 +1033,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                     join l2_Required_Reverse in l1s on l2.Level1_Required_Id equals l2_Required_Reverse.Id
                     select new { l1_Optional, l2_Required_Reverse },
                 elementSorter: e => e.l1_Optional?.Id + " " + e.l2_Required_Reverse.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Query_source_materialization_bug_4547()
-        {
-            AssertQueryScalar<Level1, Level2, Level3>(
-                (l1s, l2s, l3s) =>
-                    from e3 in l3s
-                    join e1 in l1s
-                        on
-                        (int?)e3.Id
-                        equals
-                        (
-                            from subQuery2 in l2s
-                            join subQuery3 in l3s
-                                on
-                                subQuery2 != null ? (int?)subQuery2.Id : null
-                                equals
-                                subQuery3.Level2_Optional_Id
-                                into
-                                grouping
-                            from subQuery3 in grouping.DefaultIfEmpty()
-                            orderby subQuery3 != null ? (int?)subQuery3.Id : null
-                            select subQuery3 != null ? (int?)subQuery3.Id : null
-                        ).FirstOrDefault()
-                    select e1.Id);
         }
 
         [ConditionalFact]
@@ -2095,128 +1793,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void GroupJoin_with_complex_subquery_with_joins_does_not_get_flattened()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals subquery.Level1_Optional_Id into grouping
-                    from subquery in grouping.DefaultIfEmpty()
-                    select (int?)subquery.Id,
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals subquery.Level1_Optional_Id into grouping
-                    from subquery in grouping.DefaultIfEmpty()
-                    select MaybeScalar<int>(subquery, () => subquery.Id));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_complex_subquery_with_joins_does_not_get_flattened2()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals subquery.Level1_Optional_Id into grouping
-                    from subquery in grouping.DefaultIfEmpty()
-                    select subquery != null ? (int?)subquery.Id : null,
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals subquery.Level1_Optional_Id into grouping
-                    from subquery in grouping.DefaultIfEmpty()
-                    select MaybeScalar<int>(subquery, () => subquery.Id));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_complex_subquery_with_joins_does_not_get_flattened3()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id into grouping_inner
-                            from l1_inner in grouping_inner.DefaultIfEmpty()
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals subquery.Level1_Required_Id into grouping
-                    from subquery in grouping.DefaultIfEmpty()
-                    select (int?)subquery.Id,
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id into grouping_inner
-                            from l1_inner in grouping_inner.DefaultIfEmpty()
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals MaybeScalar<int>(subquery, () => subquery.Level1_Required_Id) into grouping
-                    from subquery in grouping.DefaultIfEmpty()
-                    select MaybeScalar<int>(subquery, () => subquery.Id));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_complex_subquery_with_joins_with_reference_to_grouping1()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals subquery.Level1_Optional_Id into grouping
-                    where grouping.Any()
-                    from subquery in grouping.DefaultIfEmpty()
-                    select subquery.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_complex_subquery_with_joins_with_reference_to_grouping2()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1_outer in l1s
-                    join subquery in
-                        (
-                            from l2_inner in l2s
-                            join l1_inner in l1s on l2_inner.Level1_Required_Id equals l1_inner.Id
-                            select l2_inner
-                        )
-                        on l1_outer.Id equals subquery.Level1_Optional_Id into grouping
-                    from subquery in grouping.DefaultIfEmpty()
-                    where grouping.Any()
-                    select subquery.Id);
-        }
-
-        [ConditionalFact]
         public virtual void GroupJoin_on_a_subquery_containing_another_GroupJoin_projecting_outer()
         {
             AssertQuery<Level1, Level2>(
@@ -2413,19 +1989,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void GroupJoin_reference_to_group_in_OrderBy()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                    from l2 in groupJoin.DefaultIfEmpty()
-                    orderby groupJoin.Count()
-                    select l1.Id,
-                assertOrder: true);
-        }
-
-        [ConditionalFact]
         public virtual void GroupJoin_client_method_on_outer()
         {
             AssertQuery<Level1, Level2>(
@@ -2438,131 +2001,9 @@ namespace Microsoft.EntityFrameworkCore.Query
                 elementAsserter: (e, a) => Assert.Equal(e.Id + " " + e.client, a.Id + " " + a.client));
         }
 
-        [ConditionalFact]
-        public virtual void GroupJoin_client_method_in_OrderBy()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                    from l2 in groupJoin.DefaultIfEmpty()
-                    orderby ClientMethodNullableInt(l1.Id), ClientMethodNullableInt(l2 != null ? l2.Id : (int?)null)
-                    select l1.Id,
-                assertOrder: true);
-        }
-
         private static int ClientMethodNullableInt(int? id)
         {
             return id ?? 0;
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_without_DefaultIfEmpty()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                    from l2 in groupJoin.Select(gg => gg)
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_subquery_on_inner()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                    from l2 in groupJoin.Where(gg => gg.Id > 0).OrderBy(gg => gg.Id).Take(10).DefaultIfEmpty()
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void GroupJoin_with_subquery_on_inner_and_no_DefaultIfEmpty()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in l1s
-                    join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into groupJoin
-                    from l2 in groupJoin.Where(gg => gg.Id > 0).OrderBy(gg => gg.Id).Take(10)
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Optional_navigation_in_subquery_with_unrelated_projection()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    l1s.Where(l1 => l1.OneToOne_Optional_FK.Name != "Foo")
-                        .OrderBy(l1 => l1.Id)
-                        .Take(15)
-                        .Select(l1 => l1.Id),
-                (l1s, l2s) =>
-                    l1s.Where(l1 => Maybe(l1.OneToOne_Optional_FK, () => l1.OneToOne_Optional_FK.Name) != "Foo")
-                        .OrderBy(l1 => l1.Id)
-                        .Take(15)
-                        .Select(l1 => l1.Id));
-        }
-
-        [ConditionalFact]
-        public virtual void Explicit_GroupJoin_in_subquery_with_unrelated_projection()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in (from l1 in l1s
-                                join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into grouping
-                                from l2 in grouping.DefaultIfEmpty()
-#pragma warning disable IDE0031 // Use null propagation
-                                where (l2 != null ? l2.Name : null) != "Foo"
-#pragma warning restore IDE0031 // Use null propagation
-                                select l1).OrderBy(l1 => l1.Id).Take(15)
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Explicit_GroupJoin_in_subquery_with_unrelated_projection2()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in (from l1 in l1s
-                                join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into grouping
-                                from l2 in grouping.DefaultIfEmpty()
-#pragma warning disable IDE0031 // Use null propagation
-                                where (l2 != null ? l2.Name : null) != "Foo"
-#pragma warning restore IDE0031 // Use null propagation
-                                select l1).Distinct()
-                    select l1.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Explicit_GroupJoin_in_subquery_with_unrelated_projection3()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in (from l1 in l1s
-                                join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into grouping
-                                from l2 in grouping.DefaultIfEmpty()
-#pragma warning disable IDE0031 // Use null propagation
-                                where (l2 != null ? l2.Name : null) != "Foo"
-#pragma warning restore IDE0031 // Use null propagation
-                                select l1.Id).Distinct()
-                    select l1);
-        }
-
-        [ConditionalFact]
-        public virtual void Explicit_GroupJoin_in_subquery_with_unrelated_projection4()
-        {
-            AssertQueryScalar<Level1, Level2>(
-                (l1s, l2s) =>
-                    from l1 in (from l1 in l1s
-                                join l2 in l2s on l1.Id equals l2.Level1_Optional_Id into grouping
-                                from l2 in grouping.DefaultIfEmpty()
-#pragma warning disable IDE0031 // Use null propagation
-                                where (l2 != null ? l2.Name : null) != "Foo"
-#pragma warning restore IDE0031 // Use null propagation
-                                select l1.Id).Distinct().OrderBy(id => id).Take(20)
-                    select l1);
         }
 
         [ConditionalFact]
@@ -2726,45 +2167,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Navigation_with_same_navigation_compared_to_null()
-        {
-            AssertQueryScalar<Level2>(
-                l2s => from l2 in l2s
-                       where l2.OneToMany_Required_Inverse.Name != "L1 07" && l2.OneToMany_Required_Inverse != null
-                       select l2.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Multi_level_navigation_compared_to_null()
-        {
-            AssertQueryScalar<Level3>(
-                l3s => from l3 in l3s
-                       where l3.OneToMany_Optional_Inverse.OneToOne_Required_FK_Inverse != null
-                       select l3.Id,
-                l3s => from l3 in l3s
-                       where Maybe(l3.OneToMany_Optional_Inverse, () => l3.OneToMany_Optional_Inverse.OneToOne_Required_FK_Inverse) != null
-                       select l3.Id);
-        }
-
-        [ConditionalFact]
-        public virtual void Multi_level_navigation_with_same_navigation_compared_to_null()
-        {
-            AssertQueryScalar<Level3>(
-                l3s => from l3 in l3s
-                       where l3.OneToMany_Optional_Inverse.OneToOne_Required_FK_Inverse.Name != "L1 07"
-                       where l3.OneToMany_Optional_Inverse.OneToOne_Required_FK_Inverse != null
-                       select l3.Id,
-                l3s => from l3 in l3s
-                       where Maybe(
-                                 l3.OneToMany_Optional_Inverse,
-                                 () => Maybe(
-                                     l3.OneToMany_Optional_Inverse.OneToOne_Required_FK_Inverse,
-                                     () => l3.OneToMany_Optional_Inverse.OneToOne_Required_FK_Inverse.Name)) != "L1 07"
-                       where Maybe(l3.OneToMany_Optional_Inverse, () => l3.OneToMany_Optional_Inverse.OneToOne_Required_FK_Inverse) != null
-                       select l3.Id);
-        }
-
-        [ConditionalFact]
         public virtual void Navigations_compared_to_each_other1()
         {
             AssertQuery<Level2>(
@@ -2824,25 +2226,10 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void Comparing_collection_navigation_on_optional_reference_to_null()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s.Where(l1 => l1.OneToOne_Optional_FK.OneToMany_Optional == null).Select(l1 => l1.Id),
-                l1s => l1s.Where(l1 => Maybe(l1.OneToOne_Optional_FK, () => l1.OneToOne_Optional_FK.OneToMany_Optional) == null).Select(l1 => l1.Id));
-        }
-
-        [ConditionalFact]
         public virtual void Select_subquery_with_client_eval_and_navigation1()
         {
             AssertQuery<Level2>(
                 l2s => l2s.Select(l2 => l2s.OrderBy(l => l.Id).First().OneToOne_Required_FK_Inverse.Name));
-        }
-
-        [ConditionalFact]
-        public virtual void Select_subquery_with_client_eval_and_navigation2()
-        {
-            AssertQueryScalar<Level2>(
-                l2s => l2s.Select(l2 => l2s.OrderBy(l => l.Id).First().OneToOne_Required_FK_Inverse.Name == "L1 02"));
         }
 
         [ConditionalFact(Skip = "issue #8526")]
@@ -3115,13 +2502,6 @@ namespace Microsoft.EntityFrameworkCore.Query
 
                 Assert.Empty(context.ChangeTracker.Entries());
             }
-        }
-
-        [ConditionalFact]
-        public virtual void Nav_rewrite_doesnt_apply_null_protection_for_function_arguments()
-        {
-            AssertQueryScalar<Level1>(
-                l1s => l1s.Where(l1 => l1.OneToOne_Optional_PK != null).Select(l1 => Math.Max(l1.OneToOne_Optional_PK.Level1_Required_Id, 7)));
         }
 
         [ConditionalFact(Skip = "See issue#11464")]

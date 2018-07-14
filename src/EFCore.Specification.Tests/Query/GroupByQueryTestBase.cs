@@ -29,42 +29,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         #region GroupByProperty
 
         [ConditionalFact]
-        public virtual void GroupBy_Property_Select_Average()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID).Select(g => g.Average(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_Select_Count()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID).Select(g => g.Count()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_Select_LongCount()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID).Select(g => g.LongCount()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_Select_Max()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID).Select(g => g.Max(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_Select_Min()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID).Select(g => g.Min(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_Select_Sum()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID).Select(g => g.Sum(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
         public virtual void GroupBy_Property_Select_Sum_Min_Max_Avg()
         {
             AssertQuery<Order>(
@@ -203,42 +167,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         #region GroupByAnonymousAggregate
 
         [ConditionalFact]
-        public virtual void GroupBy_anonymous_Select_Average()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID }).Select(g => g.Average(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_anonymous_Select_Count()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID }).Select(g => g.Count()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_anonymous_Select_LongCount()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID }).Select(g => g.LongCount()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_anonymous_Select_Max()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID }).Select(g => g.Max(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_anonymous_Select_Min()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID }).Select(g => g.Min(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_anonymous_Select_Sum()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID }).Select(g => g.Sum(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
         public virtual void GroupBy_anonymous_Select_Sum_Min_Max_Avg()
         {
             AssertQuery<Order>(
@@ -265,42 +193,6 @@ namespace Microsoft.EntityFrameworkCore.Query
                         Key = g.Key.Id,
                         Sum = g.Sum(o => o.OrderID)
                     }));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Composite_Select_Average()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID, o.EmployeeID }).Select(g => g.Average(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Composite_Select_Count()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID, o.EmployeeID }).Select(g => g.Count()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Composite_Select_LongCount()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID, o.EmployeeID }).Select(g => g.LongCount()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Composite_Select_Max()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID, o.EmployeeID }).Select(g => g.Max(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Composite_Select_Min()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID, o.EmployeeID }).Select(g => g.Min(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Composite_Select_Sum()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => new { o.CustomerID, o.EmployeeID }).Select(g => g.Sum(o => o.OrderID)));
         }
 
         [ConditionalFact]
@@ -756,94 +648,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         #region GroupByWithElementSelectorAggregate
 
         [ConditionalFact]
-        public virtual void GroupBy_Property_scalar_element_selector_Average()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => o.OrderID).Select(g => g.Average()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_scalar_element_selector_Count()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => o.OrderID).Select(g => g.Count()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_scalar_element_selector_LongCount()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => o.OrderID).Select(g => g.LongCount()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_scalar_element_selector_Max()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => o.OrderID).Select(g => g.Max()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_scalar_element_selector_Min()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => o.OrderID).Select(g => g.Min()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_scalar_element_selector_Sum()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => o.OrderID).Select(g => g.Sum()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_scalar_element_selector_Sum_Min_Max_Avg()
-        {
-            AssertQuery<Order>(
-                os => os.GroupBy(o => o.CustomerID, o => o.OrderID).Select(
-                    g =>
-                        new
-                        {
-                            Sum = g.Sum(),
-                            Min = g.Min(),
-                            Max = g.Max(),
-                            Avg = g.Average()
-                        }),
-                e => e.Min + " " + e.Max);
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_anonymous_element_selector_Average()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => new { o.OrderID, o.EmployeeID }).Select(g => g.Average(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_anonymous_element_selector_Count()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => new { o.OrderID, o.EmployeeID }).Select(g => g.Count()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_anonymous_element_selector_LongCount()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => new { o.OrderID, o.EmployeeID }).Select(g => g.LongCount()));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_anonymous_element_selector_Max()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => new { o.OrderID, o.EmployeeID }).Select(g => g.Max(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_anonymous_element_selector_Min()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => new { o.OrderID, o.EmployeeID }).Select(g => g.Min(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Property_anonymous_element_selector_Sum()
-        {
-            AssertQueryScalar<Order>(os => os.GroupBy(o => o.CustomerID, o => new { o.OrderID, o.EmployeeID }).Select(g => g.Sum(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
         public virtual void GroupBy_Property_anonymous_element_selector_Sum_Min_Max_Avg()
         {
             AssertQuery<Order>(
@@ -864,65 +668,12 @@ namespace Microsoft.EntityFrameworkCore.Query
         #region GroupByAfterComposition
 
         [ConditionalFact]
-        public virtual void GroupBy_empty_key_Aggregate()
-        {
-            AssertQueryScalar<Order>(
-                os =>
-                    os.GroupBy(o => new { })
-                        .Select(g => g.Sum(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
         public virtual void GroupBy_empty_key_Aggregate_Key()
         {
             AssertQuery<Order>(
                 os =>
                     os.GroupBy(o => new { })
                         .Select(g => new { g.Key, Sum = g.Sum(o => o.OrderID) }));
-        }
-
-        [ConditionalFact]
-        public virtual void OrderBy_GroupBy_Aggregate()
-        {
-            AssertQueryScalar<Order>(
-                os =>
-                    os.OrderBy(o => o.OrderID)
-                        .GroupBy(o => o.CustomerID)
-                        .Select(g => g.Sum(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void OrderBy_Skip_GroupBy_Aggregate()
-        {
-            AssertQueryScalar<Order>(
-                os =>
-                    os.OrderBy(o => o.OrderID)
-                        .Skip(80)
-                        .GroupBy(o => o.CustomerID)
-                        .Select(g => g.Average(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void OrderBy_Take_GroupBy_Aggregate()
-        {
-            AssertQueryScalar<Order>(
-                os =>
-                    os.OrderBy(o => o.OrderID)
-                        .Take(500)
-                        .GroupBy(o => o.CustomerID)
-                        .Select(g => g.Min(o => o.OrderID)));
-        }
-
-        [ConditionalFact]
-        public virtual void OrderBy_Skip_Take_GroupBy_Aggregate()
-        {
-            AssertQueryScalar<Order>(
-                os =>
-                    os.OrderBy(o => o.OrderID)
-                        .Skip(80)
-                        .Take(500)
-                        .GroupBy(o => o.CustomerID)
-                        .Select(g => g.Max(o => o.OrderID)));
         }
 
         [ConditionalFact]
@@ -1391,20 +1142,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         [ConditionalFact]
-        public virtual void GroupBy_Sum_constant()
-        {
-            AssertQueryScalar<Order>(
-                os => os.GroupBy(o => o.CustomerID).Select(g => g.Sum(e => 1)));
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Sum_constant_cast()
-        {
-            AssertQueryScalar<Order>(
-                os => os.GroupBy(o => o.CustomerID).Select(g => g.Sum(e => 1L)));
-        }
-
-        [ConditionalFact]
         public virtual void Distinct_GroupBy_OrderBy_key()
         {
             AssertQuery<Order>(
@@ -1491,15 +1228,6 @@ namespace Microsoft.EntityFrameworkCore.Query
 
             // ReSharper disable once NonReadonlyMemberInGetHashCode
             public override int GetHashCode() => Order.GetHashCode();
-        }
-
-        [ConditionalFact]
-        public virtual void GroupBy_Where_in_aggregate()
-        {
-            AssertQueryScalar<Order>(
-                os => from o in os
-                      group o by new { o.CustomerID } into g
-                      select g.Where(e => e.OrderID < 10300).Count());
         }
 
         #endregion

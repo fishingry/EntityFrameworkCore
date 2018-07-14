@@ -25,12 +25,6 @@ namespace Microsoft.EntityFrameworkCore.Query
             base.Select_subquery_with_client_eval_and_navigation1();
         }
 
-        [ConditionalFact(Skip = "issue #8526")]
-        public override void Select_subquery_with_client_eval_and_navigation2()
-        {
-            base.Select_subquery_with_client_eval_and_navigation2();
-        }
-
         // Naked instances not supported
         public override void Entity_equality_empty()
         {
@@ -64,18 +58,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         public override void Navigations_compared_to_each_other5()
-        {
-        }
-
-        public override void Navigation_with_same_navigation_compared_to_null()
-        {
-        }
-
-        public override void Multi_level_navigation_compared_to_null()
-        {
-        }
-
-        public override void Multi_level_navigation_with_same_navigation_compared_to_null()
         {
         }
 
@@ -167,10 +149,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        public override void Comparing_collection_navigation_on_optional_reference_to_null()
-        {
-        }
-
         // Self-ref not supported
         public override void Join_navigation_translated_to_subquery_self_ref()
         {
@@ -201,18 +179,6 @@ namespace Microsoft.EntityFrameworkCore.Query
         }
 
         public override void Optional_navigation_propagates_nullability_to_manually_created_left_join2()
-        {
-        }
-
-        public override void GroupJoin_with_complex_subquery_with_joins_does_not_get_flattened()
-        {
-        }
-
-        public override void GroupJoin_with_complex_subquery_with_joins_does_not_get_flattened2()
-        {
-        }
-
-        public override void GroupJoin_with_complex_subquery_with_joins_does_not_get_flattened3()
         {
         }
 
