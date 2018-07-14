@@ -255,20 +255,13 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
 
         public static int AssertResults<T>(
             IList<T> expected,
-            //IList<T> actual,
             Func<T, object> elementSorter,
             Action<T, T> elementAsserter,
             bool verifyOrdered)
         {
-            //Assert.Equal(expected.Count, actual.Count);
-
             if (elementSorter == null && !verifyOrdered)
             {
                 return expected.Count;
-                //if (ShouldPerformUnsortedVerification(expected))
-                //{
-                //    return AssertResults(expected, actual, assertOrder: false);
-                //}
             }
 
             elementSorter = elementSorter ?? (e => e);
@@ -276,81 +269,29 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             if (!verifyOrdered)
             {
                 expected = expected.OrderBy(elementSorter).ToList();
-                //actual = actual.OrderBy(elementSorter).ToList();
             }
-
-            //for (var i = 0; i < expected.Count; i++)
-            //{
-            //    elementAsserter(expected[i], actual[i]);
-            //}
 
             return expected.Count;
         }
 
         public static int AssertResults<T>(
             IList<T> expected,
-            //IList<T> actual,
             Func<T, T> elementSorter,
             Action<T, T> elementAsserter,
             bool verifyOrdered)
         {
-            //Assert.Equal(expected.Count, actual.Count);
-
             if (elementSorter == null && !verifyOrdered)
             {
                 return expected.Count();
-                //if (ShouldPerformUnsortedVerification(expected))
-                //{
-                //    return AssertResults(expected, actual, assertOrder: false);
-                //}
             }
 
             elementAsserter = elementAsserter ?? Assert.Equal;
             if (!verifyOrdered)
             {
                 expected = expected.OrderBy(elementSorter).ToList();
-                //actual = actual.OrderBy(elementSorter).ToList();
             }
-
-            //for (var i = 0; i < expected.Count; i++)
-            //{
-            //    elementAsserter(expected[i], actual[i]);
-            //}
 
             return expected.Count;
-        }
-
-        public static int AssertResultsNullable<T>(
-            IList<T?> expected,
-            IList<T?> actual,
-            Func<T?, T?> elementSorter,
-            Action<T?, T?> elementAsserter,
-            bool verifyOrdered)
-            where T : struct
-        {
-            Assert.Equal(expected.Count, actual.Count);
-
-            if (elementSorter == null && !verifyOrdered)
-            {
-                if (ShouldPerformUnsortedVerification(expected))
-                {
-                    return AssertResults(expected, actual, assertOrder: false);
-                }
-            }
-
-            elementAsserter = elementAsserter ?? Assert.Equal;
-            if (!verifyOrdered)
-            {
-                expected = expected.OrderBy(elementSorter).ToList();
-                actual = actual.OrderBy(elementSorter).ToList();
-            }
-
-            for (var i = 0; i < expected.Count; i++)
-            {
-                elementAsserter(expected[i], actual[i]);
-            }
-
-            return actual.Count;
         }
 
         private static bool ShouldPerformUnsortedVerification<T>(IList<T> expected)
