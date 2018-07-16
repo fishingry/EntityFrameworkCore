@@ -1,9 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
 {
     public class Gear
@@ -30,8 +27,5 @@ namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
         public int LeaderSquadId { get; set; }
 
         public bool HasSoulPatch { get; set; }
-
-        [NotMapped]
-        public bool IsMarcus => Nickname == "Marcus";
     }
 }

@@ -14,11 +14,6 @@
   <PropertyGroup Condition="'$(FunctionalTests_PackageVersion)' == '2.0.0'">
    <DefineConstants>$(DefineConstants);Test20</DefineConstants>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\EFCore\EFCore.csproj" />
-    <ProjectReference Include="..\EFCore.Proxies\EFCore.Proxies.csproj" />
-  </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <Reference Include="Microsoft.CSharp" />
