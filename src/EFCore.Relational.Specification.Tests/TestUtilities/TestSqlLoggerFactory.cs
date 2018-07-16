@@ -3,120 +3,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.EntityFrameworkCore.TestUtilities
 {
     public class TestSqlLoggerFactory : ILoggerFactory
     {
-        private const string FileNewLine = @"
-";
-
         private static readonly string _eol = Environment.NewLine;
 
-        public void AssertBaseline(string[] expected, bool assertOrder = true)
-        {
-            var one = 1;
-            if (one != 2)
-            {
-                return;
-            }
-
-            var sqlStatements = _logger.SqlStatements;
-
-            try
-            {
-                if (assertOrder)
-                {
-                    for (var i = 0; i < expected.Length; i++)
-                    {
-                        Assert.Equal(expected[i], sqlStatements[i], ignoreLineEndingDifferences: true);
-                    }
-                }
-                else
-                {
-                    foreach (var expectedFragment in expected)
-                    {
-                        var normalizedExpectedFragment = expectedFragment.Replace("\r", string.Empty).Replace("\n", _eol);
-                        Assert.Contains(
-                            normalizedExpectedFragment,
-                            sqlStatements);
-                    }
-                }
-            }
-            catch
-            {
-                var methodCallLine = Environment.StackTrace.Split(
-                        new[] { _eol },
-                        StringSplitOptions.RemoveEmptyEntries)[4]
-                    .Substring(6);
-
-                var testName = methodCallLine.Substring(0, methodCallLine.IndexOf(')') + 1);
-                var lineIndex = methodCallLine.LastIndexOf("line", StringComparison.Ordinal);
-                var lineNumber = lineIndex > 0 ? methodCallLine.Substring(lineIndex) : "";
-
-                const string indent = FileNewLine + "                ";
-
-                var currentDirectory = Directory.GetCurrentDirectory();
-                var logFile = currentDirectory.Substring(
-                                  0,
-                                  currentDirectory.LastIndexOf("\\test\\", StringComparison.Ordinal) + 1)
-                              + "QueryBaseline.cs";
-
-                var testInfo = $"{testName + " : " + lineNumber}" + FileNewLine;
-
-                var newBaseLine = $@"            AssertSql(
-                {string.Join("," + indent + "//" + indent, sqlStatements.Take(9).Select(sql => "@\"" + sql.Replace("\"", "\"\"") + "\""))});
-
-";
-
-                if (sqlStatements.Count > 9)
-                {
-                    newBaseLine += "Output truncated.";
-                }
-
-                _logger.TestOutputHelper?.WriteLine("---- New Baseline -------------------------------------------------------------------");
-                _logger.TestOutputHelper?.WriteLine(newBaseLine);
-
-                var contents = testInfo + newBaseLine + FileNewLine + FileNewLine;
-
-                File.AppendAllText(logFile, contents);
-
-                throw;
-            }
-        }
-
         private readonly Logger _logger = new Logger();
-
-        public void Clear()
-        {
-            _logger.Clear();
-        }
-
-        public string Log => _logger.LogBuilder.ToString();
-
-        public IReadOnlyList<string> SqlStatements => _logger.SqlStatements;
-
-        public IReadOnlyList<string> Parameters => _logger.Parameters;
-
-        public string Sql => string.Join(_eol + _eol, SqlStatements);
-
-        public CancellationToken CancelQuery()
-        {
-            return _logger.CancelQuery();
-        }
-
-        public void SetTestOutputHelper(ITestOutputHelper testOutputHelper)
-        {
-            _logger.TestOutputHelper = testOutputHelper;
-        }
 
         ILogger ILoggerFactory.CreateLogger(string categoryName) => _logger;
 

@@ -10,5 +10,10 @@ namespace Microsoft.EntityFrameworkCore.Query
             : base(fixture)
         {
         }
+
+        public override void Select_subquery_projecting_single_constant_of_non_mapped_type()
+        {
+            base.Select_subquery_projecting_single_constant_of_non_mapped_type();
+        }
     }
 }

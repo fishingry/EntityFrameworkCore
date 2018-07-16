@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Data.Common;
 using Microsoft.Data.Sqlite;
 
 namespace Microsoft.EntityFrameworkCore.TestUtilities
@@ -14,17 +13,11 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
         public static SqliteTestStore GetOrCreate(string name, bool sharedCache = true)
             => new SqliteTestStore(name, sharedCache: sharedCache);
 
-        public static SqliteTestStore GetOrCreateInitialized(string name)
-            => new SqliteTestStore(name).InitializeSqlite(null, (Func<DbContext>)null, null);
-
         public static SqliteTestStore GetExisting(string name)
             => new SqliteTestStore(name, seed: false);
 
         public static SqliteTestStore Create(string name, bool sharedCache = true)
             => new SqliteTestStore(name, sharedCache: sharedCache, shared: false);
-
-        public static SqliteTestStore CreateInitialized(string name)
-            => new SqliteTestStore(name, shared: false).InitializeSqlite(null, (Func<DbContext>)null, null);
 
         private readonly bool _seed;
 
@@ -44,12 +37,6 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
 
         public override DbContextOptionsBuilder AddProviderOptions(DbContextOptionsBuilder builder)
             => builder.UseSqlite(Connection, b => b.CommandTimeout(CommandTimeout));
-
-        public SqliteTestStore InitializeSqlite(IServiceProvider serviceProvider, Func<DbContext> createContext, Action<DbContext> seed)
-            => (SqliteTestStore)Initialize(serviceProvider, createContext, seed);
-
-        public SqliteTestStore InitializeSqlite(IServiceProvider serviceProvider, Func<SqliteTestStore, DbContext> createContext, Action<DbContext> seed)
-            => (SqliteTestStore)Initialize(serviceProvider, () => createContext(this), seed);
 
         protected override void Initialize(Func<DbContext> createContext, Action<DbContext> seed)
         {
@@ -79,29 +66,6 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
                 command.CommandText = "PRAGMA foreign_keys=ON;";
                 command.ExecuteNonQuery();
             }
-        }
-
-        public int ExecuteNonQuery(string sql, params object[] parameters)
-        {
-            using (var command = CreateCommand(sql, parameters))
-            {
-                return command.ExecuteNonQuery();
-            }
-        }
-
-        private DbCommand CreateCommand(string commandText, object[] parameters)
-        {
-            var command = (SqliteCommand)Connection.CreateCommand();
-
-            command.CommandText = commandText;
-            command.CommandTimeout = CommandTimeout;
-
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                command.Parameters.AddWithValue("@p" + i, parameters[i]);
-            }
-
-            return command;
         }
     }
 }
