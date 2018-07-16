@@ -4,8 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.TestUtilities
 {
@@ -23,7 +21,6 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             }
 
             elementSorter = elementSorter ?? (e => e);
-            elementAsserter = elementAsserter ?? Assert.Equal;
             if (!verifyOrdered)
             {
                 expected = expected.OrderBy(elementSorter).ToList();
