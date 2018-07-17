@@ -5,10 +5,6 @@ namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
 {
     public class Gear
     {
-        public Gear()
-        {
-        }
-
         public bool HasSoulPatch { get; set; }
     }
 }

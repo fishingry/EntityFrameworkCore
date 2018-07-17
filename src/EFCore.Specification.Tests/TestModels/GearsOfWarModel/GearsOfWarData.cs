@@ -4,11 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.TestUtilities;
 
 namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
 {
-    public class GearsOfWarData : IExpectedData
+    public class GearsOfWarData
     {
         public IReadOnlyList<Gear> Gears { get; }
         public IReadOnlyList<Squad> Squads { get; }
