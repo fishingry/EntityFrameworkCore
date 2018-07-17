@@ -40,8 +40,8 @@ namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
         public static IReadOnlyList<Squad> CreateSquads()
             => new List<Squad>
             {
-                new Squad { Id = 1, Name = "Delta" },
-                new Squad { Id = 2, Name = "Kilo" }
+                new Squad { Name = "Delta" },
+                new Squad { Name = "Kilo" }
             };
 
         public static IReadOnlyList<Gear> CreateGears()
@@ -49,56 +49,23 @@ namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
             {
                 new Gear
                 {
-                    Nickname = "Dom",
-                    FullName = "Dominic Santiago",
                     HasSoulPatch = false,
-                    SquadId = 1,
-                    Rank = MilitaryRank.Corporal,
-                    CityOrBirthName = "Ephyra",
-                    LeaderNickname = "Marcus",
-                    LeaderSquadId = 1
                 },
                 new Gear
                 {
-                    Nickname = "Cole Train",
-                    FullName = "Augustus Cole",
                     HasSoulPatch = false,
-                    SquadId = 1,
-                    Rank = MilitaryRank.Private,
-                    CityOrBirthName = "Hanover",
-                    LeaderNickname = "Marcus",
-                    LeaderSquadId = 1
                 },
                 new Gear
                 {
-                    Nickname = "Paduk",
-                    FullName = "Garron Paduk",
                     HasSoulPatch = false,
-                    SquadId = 2,
-                    Rank = MilitaryRank.Private,
-                    CityOrBirthName = "Unknown",
-                    LeaderNickname = "Baird",
-                    LeaderSquadId = 1
                 },
                 new Officer
                 {
-                    Nickname = "Baird",
-                    FullName = "Damon Baird",
                     HasSoulPatch = true,
-                    SquadId = 1,
-                    Rank = MilitaryRank.Corporal,
-                    CityOrBirthName = "Unknown",
-                    LeaderNickname = "Marcus",
-                    LeaderSquadId = 1
                 },
                 new Officer
                 {
-                    Nickname = "Marcus",
-                    FullName = "Marcus Fenix",
                     HasSoulPatch = true,
-                    SquadId = 1,
-                    Rank = MilitaryRank.Sergeant,
-                    CityOrBirthName = "Jacinto"
                 }
             };
 
@@ -106,25 +73,10 @@ namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
             IReadOnlyList<Squad> squads,
             IReadOnlyList<Gear> gears)
         {
-
             squads[0].Members = new List<Gear> { gears[0], gears[1], gears[3], gears[4] };
             squads[1].Members = new List<Gear> { gears[2] };
 
-            // dom
-            gears[0].Squad = squads[0];
-
-            // cole
-            gears[1].Squad = squads[0];
-
-            // paduk
-            gears[2].Squad = squads[1];
-
-            // baird
-            gears[3].Squad = squads[0];
             ((Officer)gears[3]).Reports = new List<Gear> { gears[2] };
-
-            // marcus
-            gears[4].Squad = squads[0];
             ((Officer)gears[4]).Reports = new List<Gear> { gears[0], gears[1], gears[3] };
         }
     }

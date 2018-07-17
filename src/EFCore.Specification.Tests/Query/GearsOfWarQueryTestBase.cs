@@ -3,7 +3,6 @@
 
 using System.Linq;
 using Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel;
-using Microsoft.EntityFrameworkCore.TestUtilities.Xunit;
 using Xunit;
 
 namespace Microsoft.EntityFrameworkCore.Query
@@ -16,7 +15,7 @@ namespace Microsoft.EntityFrameworkCore.Query
         {
         }
 
-        [ConditionalFact]
+        [Fact]
         public virtual void Select_subquery_projecting_single_constant_of_non_mapped_type()
         {
             AssertQuery<Squad>(

@@ -12,13 +12,13 @@ namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
             Members = new List<Gear>();
         }
 
-        // non-auto generated key
-        public int Id { get; set; }
+        //// non-auto generated key
+        //public int Id { get; set; }
 
         public string Name { get; set; }
 
-        // auto-generated non-key (sequence)
-        public int InternalNumber { get; set; }
+        //// auto-generated non-key (sequence)
+        //public int InternalNumber { get; set; }
 
         public virtual ICollection<Gear> Members { get; set; }
     }
