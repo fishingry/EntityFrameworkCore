@@ -59,25 +59,14 @@ namespace Microsoft.EntityFrameworkCore.TestModels.GearsOfWarModel
                 {
                     HasSoulPatch = false,
                 },
-                new Officer
-                {
-                    HasSoulPatch = true,
-                },
-                new Officer
-                {
-                    HasSoulPatch = true,
-                }
             };
 
         public static void WireUp(
             IReadOnlyList<Squad> squads,
             IReadOnlyList<Gear> gears)
         {
-            squads[0].Members = new List<Gear> { gears[0], gears[1], gears[3], gears[4] };
+            squads[0].Members = new List<Gear> { gears[0], gears[1]};
             squads[1].Members = new List<Gear> { gears[2] };
-
-            ((Officer)gears[3]).Reports = new List<Gear> { gears[2] };
-            ((Officer)gears[4]).Reports = new List<Gear> { gears[0], gears[1], gears[3] };
         }
     }
 }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Microsoft.EntityFrameworkCore.TestUtilities
 {
@@ -11,7 +10,7 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
     {
         public virtual IExpectedData ExpectedData { get; set; }
 
-        public abstract Task AssertQuery<TItem1>(
+        public abstract void AssertQuery<TItem1>(
             Func<IQueryable<TItem1>, IQueryable<object>> actualQuery,
             Func<IQueryable<TItem1>, IQueryable<object>> expectedQuery,
             Func<dynamic, object> elementSorter = null,

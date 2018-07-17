@@ -24,10 +24,7 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             _entityAsserters = entityAsserters ?? new Dictionary<Type, Action<dynamic, dynamic>>();
         }
         
-        private Task<object[]> DummyAsync() => Task.FromResult(new object[] { "foo", "bar" });
-        private object[] Dummy() => new object[] { "foo", "bar" };
-
-        public override async Task AssertQuery<TItem1>(
+        public override void AssertQuery<TItem1>(
             Func<IQueryable<TItem1>, IQueryable<object>> actualQuery,
             Func<IQueryable<TItem1>, IQueryable<object>> expectedQuery,
             Func<dynamic, object> elementSorter = null,
@@ -36,10 +33,6 @@ namespace Microsoft.EntityFrameworkCore.TestUtilities
             int entryCount = 0,
             bool isAsync = false)
         {
-            var actual = isAsync
-                ? await DummyAsync()
-                : Dummy();
-
             var expected = expectedQuery(ExpectedData.Set<TItem1>()).ToArray();
 
             TestHelpers.AssertResults(
